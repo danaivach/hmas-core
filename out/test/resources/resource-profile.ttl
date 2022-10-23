@@ -1,0 +1,6 @@
+@prefix hmas: <https://purl.org/hmas/core#> .
+
+<urn:profile> a hmas:ResourceProfile;
+  hmas:isProfileOf <urn:agent> .
+
+<urn:agent> a hmas:Agent .

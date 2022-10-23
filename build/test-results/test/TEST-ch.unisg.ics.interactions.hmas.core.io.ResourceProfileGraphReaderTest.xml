@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2022-10-23T10:16:49" hostname="LAPTOP-6RU7E3GE" time="0.081">
+  <properties/>
+  <testcase name="testReadResourceProfileMissing()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.053"/>
+  <testcase name="testReadResourceProfileOfHMASPlatform()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.008"/>
+  <testcase name="testReadResourceProfileWithSignifier()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileOfAgentBlankNode()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileOfAgentIRI()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileBNode()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileUknownOwnerType()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileCircular()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.0"/>
+  <testcase name="testReadResourceProfileMissingOwner()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.002"/>
+  <testcase name="testReadResourceProfileOfArtifact()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileFromFile()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.003"/>
+  <testcase name="testReadResourceProfileOfWorkspace()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.002"/>
+  <testcase name="testReadResourceProfileIRI()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.001"/>
+  <testcase name="testReadResourceProfileWithSignifiersWithIRI()" classname="ch.unisg.ics.interactions.hmas.core.io.ResourceProfileGraphReaderTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+</testsuite>

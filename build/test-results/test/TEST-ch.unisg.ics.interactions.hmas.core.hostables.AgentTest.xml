@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ch.unisg.ics.interactions.hmas.core.hostables.AgentTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-10-23T10:16:49" hostname="LAPTOP-6RU7E3GE" time="0.061">
+  <properties/>
+  <testcase name="testAgent()" classname="ch.unisg.ics.interactions.hmas.core.hostables.AgentTest" time="0.06"/>
+  <testcase name="testAgentDefault()" classname="ch.unisg.ics.interactions.hmas.core.hostables.AgentTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

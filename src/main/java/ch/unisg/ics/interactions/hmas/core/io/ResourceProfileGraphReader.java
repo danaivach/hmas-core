@@ -1,0 +1,177 @@
+package ch.unisg.ics.interactions.hmas.core.io;
+
+import ch.unisg.ics.interactions.hmas.core.hostables.*;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.util.Models;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.rio.helpers.StatementCollector;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import static ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS.*;
+
+public class ResourceProfileGraphReader {
+
+  private final Resource profileIRI;
+  private final ValueFactory rdf = SimpleValueFactory.getInstance();
+  private Model model;
+
+  public static ResourceProfile readFromFile(String path) throws IOException {
+    String content = new String(Files.readAllBytes(Paths.get(path)));
+    return readFromString(content);
+  }
+
+  /* Currently, the only supported format is Turtle */
+  public static ResourceProfile readFromString(String representation) {
+    ResourceProfileGraphReader reader = new ResourceProfileGraphReader(RDFFormat.TURTLE, representation);;
+
+    ResourceProfile.Builder profileBuilder =
+      new ResourceProfile.Builder(reader.readOwnerResource())
+        .addHMASPlatforms(reader.readHomeHMASPlatforms())
+        .exposeSignifiers(reader.readSignifiers());
+
+    Optional<IRI>  profileIRI = reader.readProfileIRI();
+    if (profileIRI.isPresent()) {
+      profileBuilder.setIRI(profileIRI.get());
+    }
+
+    return profileBuilder.build();
+  }
+
+  ResourceProfileGraphReader(RDFFormat format, String representation) {
+
+    loadModel(format, representation);
+
+    Optional<Resource> locatedProfile = Models.subject(model.filter(null, RDF.TYPE, RESOURCE_PROFILE.toIRI()));
+    if (locatedProfile.isPresent()) {
+      this.profileIRI = locatedProfile.get();
+    } else {
+      throw new InvalidResourceProfileException("Resource profile was not found. " +
+        "Ensure that an " + PREFIX.toIRI() + "ResourceProfile is represented.");
+    }
+  }
+
+  private void loadModel(RDFFormat format, String representation) {
+    this.model = new LinkedHashModel();
+
+    RDFParser parser = Rio.createParser(format);
+    parser.setRDFHandler(new StatementCollector(model));
+    StringReader stringReader = new StringReader(representation);
+    try {
+      parser.parse(stringReader);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  final AbstractHostable readResource(Resource node) {
+
+    Set<IRI> types = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
+
+    if (types.contains(AGENT.toIRI())) {
+      return readAgent(node);
+    } else if (types.contains(ARTIFACT.toIRI())) {
+      return readArtifact(node);
+    } else if (types.contains(WORKSPACE.toIRI())) {
+      return readWorkspace(node);
+    } else if (types.contains(HMAS_PLATFORM.toIRI())) {
+      return readHMASPlatform(node);
+    }
+    throw new InvalidResourceProfileException("Unknown type of profiled resource. " +
+      "Supported resource types: Agent, Artifact, Workspace, Platform.");
+  }
+
+  private Agent readAgent(Resource node) {
+    Agent.Builder builder = new Agent.Builder();
+    return (Agent) readProfiledResource(builder, node);
+  }
+
+  private Artifact readArtifact(Resource node) {
+    Artifact.Builder builder = new Artifact.Builder();
+    return (Artifact) readProfiledResource(builder, node);
+  }
+
+  private Workspace readWorkspace(Resource node) {
+    Workspace.Builder builder = new Workspace.Builder();
+    Set<Resource> containedNodes = Models.objectResources(model.filter(node, CONTAINS.toIRI(), null));
+    for (Resource hostedNode : containedNodes) {
+      builder.addContainedResource(readResource(hostedNode));
+    }
+    return (Workspace) readArtifact(builder, node);
+  }
+
+  private HypermediaMASPlatform readHMASPlatform(Resource node) {
+    HypermediaMASPlatform.Builder builder = new HypermediaMASPlatform.Builder();
+    Set<Resource> hostedNodes = Models.objectResources(model.filter(node, HOSTS.toIRI(), null));
+    for (Resource hostedNode : hostedNodes) {
+      builder.addHostedResource(readResource(hostedNode));
+    }
+    return (HypermediaMASPlatform) readArtifact(builder, node);
+  }
+
+  private Artifact readArtifact(Artifact.AbstractBuilder<?,?> builder, Resource node) {
+    return (Artifact) readProfiledResource(builder, node);
+  }
+
+  private AbstractProfiledResource readProfiledResource(AbstractProfiledResource.AbstractBuilder<?,?> builder, Resource node) {
+    return (AbstractProfiledResource) readHostable(builder, node);
+  }
+
+  private AbstractHostable readHostable(AbstractHostable.AbstractBuilder<?,?> builder, Resource node) {
+    if (node.isIRI()) {
+      builder.setIRI(SimpleValueFactory.getInstance().createIRI(node.stringValue()));
+    }
+    Set<Resource> platformNodes = Models.objectResources(model.filter(node, IS_HOSTED_ON.toIRI(), null));
+    for (Resource platformNode : platformNodes) {
+      builder.addHMASPlatform(readHMASPlatform(platformNode));
+    }
+    return builder.build();
+  }
+
+  final AbstractProfiledResource readOwnerResource() {
+    Optional<Resource> node = Models.objectResource(model.filter(profileIRI, IS_PROFILE_OF.toIRI(), null));
+    if (node.isPresent()) {
+      return (AbstractProfiledResource) readResource(node.get());
+    }
+    throw new InvalidResourceProfileException("A resource profile must describe a resource.");
+  }
+
+  final Set<HypermediaMASPlatform> readHomeHMASPlatforms() {
+    Set<HypermediaMASPlatform> platforms = new HashSet<>();
+    Set<Resource> platformNodes = Models.objectResources(model.filter(profileIRI, IS_HOSTED_ON.toIRI(), null));
+    for (Resource platformNode : platformNodes) {
+      platforms.add(readHMASPlatform(platformNode));
+    }
+    return platforms;
+  }
+
+  final Set<BaseSignifier> readSignifiers() {
+    Set<BaseSignifier> signifiers = new HashSet<>();
+    Set<Resource> signifierNodes = Models.objectResources(model.filter(profileIRI, EXPOSES_SIGNIFIER.toIRI(), null));
+    for (Resource signifierNode : signifierNodes) {
+      BaseSignifier.Builder builder = new BaseSignifier.Builder();
+      if (signifierNode.isIRI()) {
+        builder.setIRI(SimpleValueFactory.getInstance().createIRI(signifierNode.stringValue()));
+      }
+      signifiers.add(builder.build());
+    }
+    return signifiers;
+  }
+
+  final Optional<IRI> readProfileIRI() {
+    if (profileIRI.isIRI()) {
+      return Optional.of((IRI) profileIRI);
+    }
+
+    return Optional.empty();
+  }
+}
