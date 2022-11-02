@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.jupiter.api.Test;
 
@@ -30,9 +30,9 @@ public class AgentTest {
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:agent"), agent.getIRI().get());
     assertEquals("urn:agent", agent.getIRIAsString().get());
 
-    assertEquals(HMAS.AGENT, agent.getType());
-    assertEquals(HMAS.PREFIX + "Agent", agent.getTypeAsString());
-    assertEquals(HMAS.AGENT.toIRI(), agent.getTypeAsIRI());
+    assertEquals(CORE.AGENT, agent.getType());
+    assertEquals(CORE.PREFIX + "Agent", agent.getTypeAsString());
+    assertEquals(CORE.AGENT.toIRI(), agent.getTypeAsIRI());
 
     assertEquals(3, agent.getHMASPlatforms().size());
     assertThrows(UnsupportedOperationException.class, () -> {
@@ -47,7 +47,7 @@ public class AgentTest {
 
     assertFalse(agent.getIRI().isPresent());
     assertFalse(agent.getIRIAsString().isPresent());
-    assertEquals(HMAS.AGENT, agent.getType());
+    assertEquals(CORE.AGENT, agent.getType());
     assertEquals(0, agent.getHMASPlatforms().size());
   }
 }

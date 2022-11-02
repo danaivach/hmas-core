@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -24,9 +24,9 @@ public class ArtifactTest {
 
     Artifact artifact = builder.build();
 
-    assertEquals(HMAS.ARTIFACT, artifact.getType());
-    assertEquals(HMAS.PREFIX + "Artifact", artifact.getTypeAsString());
-    assertEquals(HMAS.ARTIFACT.toIRI(), artifact.getTypeAsIRI());
+    assertEquals(CORE.ARTIFACT, artifact.getType());
+    assertEquals(CORE.PREFIX + "Artifact", artifact.getTypeAsString());
+    assertEquals(CORE.ARTIFACT.toIRI(), artifact.getTypeAsIRI());
 
     assertEquals(3, artifact.getHMASPlatforms().size());
     assertThrows(UnsupportedOperationException.class, () -> {
@@ -39,7 +39,7 @@ public class ArtifactTest {
     Artifact artifact = new Artifact.Builder()
       .build();
 
-    assertEquals(HMAS.ARTIFACT, artifact.getType());
+    assertEquals(CORE.ARTIFACT, artifact.getType());
     assertEquals(0, artifact.getHMASPlatforms().size());
   }
 }

@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -28,23 +28,26 @@ public class ResourceProfileTest {
       new HypermediaMASPlatform.Builder().build()
     };
 
-    builder.exposeSignifiers(new HashSet<>(Arrays.asList(signifiers)));
-    builder.exposeSignifier(new BaseSignifier.Builder().build());
+    //builder.exposeSignifiers(new HashSet<>(Arrays.asList(signifiers)));
+    //builder.exposeSignifier(new BaseSignifier.Builder().build());
     builder.addHMASPlatforms(new HashSet<>(Arrays.asList(platforms)));
     builder.addHMASPlatform(new HypermediaMASPlatform.Builder().build());
 
     ResourceProfile resourceProfile = builder.build();
-    assertEquals(HMAS.RESOURCE_PROFILE, resourceProfile.getType());
-    assertEquals(HMAS.PREFIX + "ResourceProfile", resourceProfile.getTypeAsString());
-    assertEquals(HMAS.RESOURCE_PROFILE.toIRI(), resourceProfile.getTypeAsIRI());
+    assertEquals(CORE.RESOURCE_PROFILE, resourceProfile.getType());
+    assertEquals(CORE.PREFIX + "ResourceProfile", resourceProfile.getTypeAsString());
+    assertEquals(CORE.RESOURCE_PROFILE.toIRI(), resourceProfile.getTypeAsIRI());
 
     assertEquals(agent, resourceProfile.getResource());
-    assertEquals(3, resourceProfile.getExposedSignifiers().size());
+    //assertEquals(3, resourceProfile.getExposedSignifiers().size());
     assertEquals(3, resourceProfile.getHMASPlatforms().size());
 
+    /*
     assertThrows(UnsupportedOperationException.class, () -> {
       resourceProfile.getExposedSignifiers().add(null);
     });
+
+     */
 
     assertThrows(UnsupportedOperationException.class, () -> {
       resourceProfile.getHMASPlatforms().add(null);
@@ -59,9 +62,9 @@ public class ResourceProfileTest {
     ResourceProfile resourceProfile = new ResourceProfile.Builder(agent)
       .build();
 
-    assertEquals(HMAS.RESOURCE_PROFILE, resourceProfile.getType());
+    assertEquals(CORE.RESOURCE_PROFILE, resourceProfile.getType());
     assertEquals(agent, resourceProfile.getResource());
-    assertEquals(0, resourceProfile.getExposedSignifiers().size());
+    //assertEquals(0, resourceProfile.getExposedSignifiers().size());
     assertEquals(0, resourceProfile.getHMASPlatforms().size());
   }
 }

@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -33,9 +33,9 @@ public class HypermediaMASPlatformTest {
       .addHMASPlatform(new HypermediaMASPlatform.Builder().build())
       .build();
 
-    assertEquals(HMAS.HMAS_PLATFORM, hMASPlatform.getType());
-    assertEquals(HMAS.PREFIX + "HypermediaMASPlatform", hMASPlatform.getTypeAsString());
-    assertEquals(HMAS.HMAS_PLATFORM.toIRI(), hMASPlatform.getTypeAsIRI());
+    assertEquals(CORE.HMAS_PLATFORM, hMASPlatform.getType());
+    assertEquals(CORE.PREFIX + "HypermediaMASPlatform", hMASPlatform.getTypeAsString());
+    assertEquals(CORE.HMAS_PLATFORM.toIRI(), hMASPlatform.getTypeAsIRI());
 
     assertEquals(6, hMASPlatform.getHostedResources().size());
     assertEquals(3, hMASPlatform.getHMASPlatforms().size());
@@ -54,7 +54,7 @@ public class HypermediaMASPlatformTest {
     HypermediaMASPlatform hMASPlatform = new HypermediaMASPlatform.Builder()
       .build();
 
-    assertEquals(HMAS.HMAS_PLATFORM, hMASPlatform.getType());
+    assertEquals(CORE.HMAS_PLATFORM, hMASPlatform.getType());
     assertEquals(0, hMASPlatform.getHostedResources().size());
     assertEquals(0, hMASPlatform.getHMASPlatforms().size());
   }

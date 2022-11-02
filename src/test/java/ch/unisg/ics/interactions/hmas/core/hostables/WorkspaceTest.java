@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -30,9 +30,9 @@ public class WorkspaceTest {
     builder.addHMASPlatform(new HypermediaMASPlatform.Builder().build());
 
     Workspace workspace = builder.build();
-    assertEquals(HMAS.WORKSPACE, workspace.getType());
-    assertEquals(HMAS.PREFIX + "Workspace", workspace.getTypeAsString());
-    assertEquals(HMAS.WORKSPACE.toIRI(), workspace.getTypeAsIRI());
+    assertEquals(CORE.WORKSPACE, workspace.getType());
+    assertEquals(CORE.PREFIX + "Workspace", workspace.getTypeAsString());
+    assertEquals(CORE.WORKSPACE.toIRI(), workspace.getTypeAsIRI());
 
     assertEquals(3, workspace.getContainedResources().size());
     assertEquals(3, workspace.getHMASPlatforms().size());
