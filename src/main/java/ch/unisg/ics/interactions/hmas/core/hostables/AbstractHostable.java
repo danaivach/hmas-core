@@ -1,5 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.rdf4j.model.IRI;
@@ -37,7 +38,7 @@ public abstract class AbstractHostable {
   }
 
   protected AbstractHostable(final AbstractBuilder builder) {
-    this(HMAS.HOSTABLE, builder);
+    this(CORE.HOSTABLE, builder);
   }
 
   public Set<HypermediaMASPlatform> getHMASPlatforms() {

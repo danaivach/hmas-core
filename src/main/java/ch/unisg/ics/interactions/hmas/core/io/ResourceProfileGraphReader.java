@@ -17,13 +17,17 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS.*;
+import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
 
 public class ResourceProfileGraphReader {
 
-  private final Resource profileIRI;
+  protected final Resource profileIRI;
   private final ValueFactory rdf = SimpleValueFactory.getInstance();
-  private Model model;
+  protected Model model;
+
+  protected ResourceProfileGraphReader() {
+    profileIRI = null;
+  }
 
   public static ResourceProfile readFromFile(String path) throws IOException {
     String content = new String(Files.readAllBytes(Paths.get(path)));
@@ -36,8 +40,8 @@ public class ResourceProfileGraphReader {
 
     ResourceProfile.Builder profileBuilder =
       new ResourceProfile.Builder(reader.readOwnerResource())
-        .addHMASPlatforms(reader.readHomeHMASPlatforms())
-        .exposeSignifiers(reader.readSignifiers());
+        .addHMASPlatforms(reader.readHomeHMASPlatforms());
+        //.exposeSignifiers(reader.readSignifiers());
 
     Optional<IRI>  profileIRI = reader.readProfileIRI();
     if (profileIRI.isPresent()) {
@@ -47,7 +51,7 @@ public class ResourceProfileGraphReader {
     return profileBuilder.build();
   }
 
-  ResourceProfileGraphReader(RDFFormat format, String representation) {
+  protected ResourceProfileGraphReader(RDFFormat format, String representation) {
 
     loadModel(format, representation);
 
@@ -73,7 +77,7 @@ public class ResourceProfileGraphReader {
     }
   }
 
-  final AbstractHostable readResource(Resource node) {
+  protected final AbstractHostable readResource(Resource node) {
 
     Set<IRI> types = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
 
@@ -90,7 +94,7 @@ public class ResourceProfileGraphReader {
       "Supported resource types: Agent, Artifact, Workspace, Platform.");
   }
 
-  private Agent readAgent(Resource node) {
+  protected Agent readAgent(Resource node) {
     Agent.Builder builder = new Agent.Builder();
     return (Agent) readProfiledResource(builder, node);
   }
@@ -122,7 +126,7 @@ public class ResourceProfileGraphReader {
     return (Artifact) readProfiledResource(builder, node);
   }
 
-  private AbstractProfiledResource readProfiledResource(AbstractProfiledResource.AbstractBuilder<?,?> builder, Resource node) {
+  protected AbstractProfiledResource readProfiledResource(AbstractProfiledResource.AbstractBuilder<?, ?> builder, Resource node) {
     return (AbstractProfiledResource) readHostable(builder, node);
   }
 
@@ -137,7 +141,7 @@ public class ResourceProfileGraphReader {
     return builder.build();
   }
 
-  final AbstractProfiledResource readOwnerResource() {
+  protected final AbstractProfiledResource readOwnerResource() {
     Optional<Resource> node = Models.objectResource(model.filter(profileIRI, IS_PROFILE_OF.toIRI(), null));
     if (node.isPresent()) {
       return (AbstractProfiledResource) readResource(node.get());
@@ -145,7 +149,7 @@ public class ResourceProfileGraphReader {
     throw new InvalidResourceProfileException("A resource profile must describe a resource.");
   }
 
-  final Set<HypermediaMASPlatform> readHomeHMASPlatforms() {
+  protected final Set<HypermediaMASPlatform> readHomeHMASPlatforms() {
     Set<HypermediaMASPlatform> platforms = new HashSet<>();
     Set<Resource> platformNodes = Models.objectResources(model.filter(profileIRI, IS_HOSTED_ON.toIRI(), null));
     for (Resource platformNode : platformNodes) {
@@ -154,20 +158,7 @@ public class ResourceProfileGraphReader {
     return platforms;
   }
 
-  final Set<BaseSignifier> readSignifiers() {
-    Set<BaseSignifier> signifiers = new HashSet<>();
-    Set<Resource> signifierNodes = Models.objectResources(model.filter(profileIRI, EXPOSES_SIGNIFIER.toIRI(), null));
-    for (Resource signifierNode : signifierNodes) {
-      BaseSignifier.Builder builder = new BaseSignifier.Builder();
-      if (signifierNode.isIRI()) {
-        builder.setIRI(SimpleValueFactory.getInstance().createIRI(signifierNode.stringValue()));
-      }
-      signifiers.add(builder.build());
-    }
-    return signifiers;
-  }
-
-  final Optional<IRI> readProfileIRI() {
+  protected final Optional<IRI> readProfileIRI() {
     if (profileIRI.isIRI()) {
       return Optional.of((IRI) profileIRI);
     }

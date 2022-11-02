@@ -1,11 +1,11 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 
 public class Agent extends AbstractProfiledResource {
 
-  private Agent(AbstractBuilder builder) {
-    super(HMAS.AGENT, builder);
+  protected Agent(AbstractBuilder builder) {
+    super(CORE.AGENT, builder);
   }
 
   public static class Builder extends AbstractBuilder<Builder, Agent> {

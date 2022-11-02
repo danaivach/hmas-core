@@ -11,14 +11,14 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 
 import java.util.Set;
 
-import static ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS.*;
+import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
 
 public class ResourceProfileGraphWriter {
 
-  private final Resource profileIRI;
-  private final ResourceProfile profile;
-  private final ModelBuilder graphBuilder;
-  private final ValueFactory rdf = SimpleValueFactory.getInstance();
+  protected final Resource profileIRI;
+  protected final ResourceProfile profile;
+  protected final ModelBuilder graphBuilder;
+  protected final ValueFactory rdf = SimpleValueFactory.getInstance();
 
   public ResourceProfileGraphWriter(ResourceProfile profile) {
     this.profileIRI = resolveHostableLocation(profile);
@@ -46,7 +46,7 @@ public class ResourceProfileGraphWriter {
     return this.addProfileIRI()
       .addOwnerResource()
       .addHomeHMASPlatforms()
-      .addSignifiers()
+      //.addSignifiers()
       .write(RDFFormat.TURTLE);
   }
 
@@ -80,8 +80,8 @@ public class ResourceProfileGraphWriter {
     }
     return this;
   }
-
-  private ResourceProfileGraphWriter addSignifiers() {
+/*
+  protected ResourceProfileGraphWriter addSignifiers() {
     Set<BaseSignifier> signifiers = profile.getExposedSignifiers();
     if (!signifiers.isEmpty()) {
       for (BaseSignifier signifier : signifiers) {
@@ -93,14 +93,20 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
+ */
+
   private ResourceProfileGraphWriter addResource(AbstractHostable resource, Resource node) {
 
-    switch(resource.getType()) {
-      case AGENT -> addAgent((Agent) resource, node);
-      case ARTIFACT -> addArtifact((Artifact) resource, node);
-      case WORKSPACE -> addWorkspace((Workspace) resource, node);
-      case HMAS_PLATFORM -> addHMASPlatform((HypermediaMASPlatform) resource, node);
-      default -> addHostable(resource, node);
+    if (AGENT.equals(resource.getType())) {
+      addAgent((Agent) resource, node);
+    } else if (ARTIFACT.equals(resource.getType())) {
+      addArtifact((Artifact) resource, node);
+    } else if (WORKSPACE.equals(resource.getType())) {
+      addWorkspace((Workspace) resource, node);
+    } else if (HMAS_PLATFORM.equals(resource.getType())) {
+      addHMASPlatform((HypermediaMASPlatform) resource, node);
+    } else {
+      addHostable(resource, node);
     }
     return this;
   }
@@ -148,7 +154,7 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
-  private Resource resolveHostableLocation(AbstractHostable hostable) {
+  protected Resource resolveHostableLocation(AbstractHostable hostable) {
     return hostable.getIRI().isPresent() ? hostable.getIRI().get() : rdf.createBNode();
   }
 

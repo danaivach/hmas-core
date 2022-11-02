@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.HashSet;
@@ -11,7 +11,7 @@ public class Workspace extends Artifact {
   private final Set<AbstractHostable> containedResources;
 
   protected Workspace(AbstractBuilder builder) {
-    super(HMAS.WORKSPACE, builder);
+    super(CORE.WORKSPACE, builder);
     this.containedResources = ImmutableSet.copyOf(builder.containedResources);
   }
 

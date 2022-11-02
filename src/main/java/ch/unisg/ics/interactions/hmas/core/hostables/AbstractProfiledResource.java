@@ -1,5 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
 public abstract class AbstractProfiledResource extends AbstractHostable {

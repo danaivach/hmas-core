@@ -1,11 +1,12 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
 public class Artifact extends AbstractProfiledResource {
 
   protected Artifact(AbstractBuilder builder) {
-    super(HMAS.ARTIFACT, builder);
+    super(CORE.ARTIFACT, builder);
   }
 
   protected Artifact(HMAS type, AbstractBuilder builder) {

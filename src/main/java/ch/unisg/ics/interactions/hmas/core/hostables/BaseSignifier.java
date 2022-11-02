@@ -1,11 +1,11 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 
 public class BaseSignifier extends AbstractHostable {
 
   protected BaseSignifier(AbstractBuilder builder) {
-    super(HMAS.SIGNIFIER, builder);
+    super(CORE.SIGNIFIER, builder);
   }
 
   public static class Builder extends AbstractBuilder<Builder, BaseSignifier> {

@@ -1,6 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
-import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.HashSet;
@@ -10,7 +10,7 @@ public class HypermediaMASPlatform extends Artifact {
   private final Set<AbstractHostable> hostedResources;
 
   protected HypermediaMASPlatform(AbstractBuilder builder) {
-    super(HMAS.HMAS_PLATFORM, builder);
+    super(CORE.HMAS_PLATFORM, builder);
     this.hostedResources = ImmutableSet.copyOf(builder.hostedResources);
   }
 
