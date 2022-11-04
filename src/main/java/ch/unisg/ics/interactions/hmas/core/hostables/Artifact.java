@@ -6,7 +6,7 @@ import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 public class Artifact extends AbstractProfiledResource {
 
   protected Artifact(AbstractBuilder builder) {
-    super(CORE.ARTIFACT, builder);
+    super(CORE.TERM.ARTIFACT, builder);
   }
 
   protected Artifact(HMAS type, AbstractBuilder builder) {
@@ -20,7 +20,7 @@ public class Artifact extends AbstractProfiledResource {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Artifact>
-    extends AbstractProfiledResource.AbstractBuilder<S, T> {
+          extends AbstractProfiledResource.AbstractBuilder<S, T> {
     public abstract T build();
   }
 }

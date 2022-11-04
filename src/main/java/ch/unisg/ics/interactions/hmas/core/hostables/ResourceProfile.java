@@ -6,7 +6,7 @@ public class ResourceProfile extends AbstractHostable {
   private final AbstractProfiledResource resource;
 
   protected ResourceProfile(AbstractBuilder builder) {
-    super(CORE.RESOURCE_PROFILE, builder);
+    super(CORE.TERM.RESOURCE_PROFILE, builder);
     this.resource = builder.resource;
   }
 
@@ -26,7 +26,7 @@ public class ResourceProfile extends AbstractHostable {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends ResourceProfile>
-    extends AbstractHostable.AbstractBuilder<S, T> {
+          extends AbstractHostable.AbstractBuilder<S, T> {
 
     private final AbstractProfiledResource resource;
 

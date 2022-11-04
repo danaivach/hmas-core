@@ -15,8 +15,8 @@ public class ArtifactTest {
     Artifact.Builder builder = new Artifact.Builder();
 
     HypermediaMASPlatform[] platforms = {
-      new HypermediaMASPlatform.Builder().build(),
-      new HypermediaMASPlatform.Builder().build()
+            new HypermediaMASPlatform.Builder().build(),
+            new HypermediaMASPlatform.Builder().build()
     };
 
     builder.addHMASPlatforms(new HashSet<>(Arrays.asList(platforms)));
@@ -24,9 +24,9 @@ public class ArtifactTest {
 
     Artifact artifact = builder.build();
 
-    assertEquals(CORE.ARTIFACT, artifact.getType());
-    assertEquals(CORE.PREFIX + "Artifact", artifact.getTypeAsString());
-    assertEquals(CORE.ARTIFACT.toIRI(), artifact.getTypeAsIRI());
+    assertEquals(CORE.TERM.ARTIFACT, artifact.getType());
+    assertEquals(CORE.NAMESPACE + "Artifact", artifact.getTypeAsString());
+    assertEquals(CORE.ARTIFACT, artifact.getTypeAsIRI());
 
     assertEquals(3, artifact.getHMASPlatforms().size());
     assertThrows(UnsupportedOperationException.class, () -> {
@@ -37,9 +37,9 @@ public class ArtifactTest {
   @Test
   public void testArtifactDefault() {
     Artifact artifact = new Artifact.Builder()
-      .build();
+            .build();
 
-    assertEquals(CORE.ARTIFACT, artifact.getType());
+    assertEquals(CORE.TERM.ARTIFACT, artifact.getType());
     assertEquals(0, artifact.getHMASPlatforms().size());
   }
 }

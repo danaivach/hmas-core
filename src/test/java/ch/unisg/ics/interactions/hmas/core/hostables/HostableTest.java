@@ -52,8 +52,8 @@ public class HostableTest {
     Agent.Builder builder = new Agent.Builder();
 
     HypermediaMASPlatform[] platforms = {
-      new HypermediaMASPlatform.Builder().build(),
-      new HypermediaMASPlatform.Builder().build()
+            new HypermediaMASPlatform.Builder().build(),
+            new HypermediaMASPlatform.Builder().build()
     };
 
     builder.addHMASPlatforms(new HashSet<>(Arrays.asList(platforms)));

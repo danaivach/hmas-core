@@ -15,13 +15,13 @@ public class WorkspaceTest {
     Workspace.Builder builder = new Workspace.Builder();
 
     AbstractProfiledResource[] resources = {
-      new Agent.Builder().build(),
-      new Artifact.Builder().build()
+            new Agent.Builder().build(),
+            new Artifact.Builder().build()
     };
 
     HypermediaMASPlatform[] platforms = {
-      new HypermediaMASPlatform.Builder().build(),
-      new HypermediaMASPlatform.Builder().build()
+            new HypermediaMASPlatform.Builder().build(),
+            new HypermediaMASPlatform.Builder().build()
     };
 
     builder.addContainedResources(new HashSet<>(Arrays.asList(resources)));
@@ -30,9 +30,9 @@ public class WorkspaceTest {
     builder.addHMASPlatform(new HypermediaMASPlatform.Builder().build());
 
     Workspace workspace = builder.build();
-    assertEquals(CORE.WORKSPACE, workspace.getType());
-    assertEquals(CORE.PREFIX + "Workspace", workspace.getTypeAsString());
-    assertEquals(CORE.WORKSPACE.toIRI(), workspace.getTypeAsIRI());
+    assertEquals(CORE.TERM.WORKSPACE, workspace.getType());
+    assertEquals(CORE.NAMESPACE + "Workspace", workspace.getTypeAsString());
+    assertEquals(CORE.WORKSPACE, workspace.getTypeAsIRI());
 
     assertEquals(3, workspace.getContainedResources().size());
     assertEquals(3, workspace.getHMASPlatforms().size());
@@ -49,7 +49,7 @@ public class WorkspaceTest {
   @Test
   public void testWorkspaceDefault() {
     Workspace workspace = new Workspace.Builder()
-      .build();
+            .build();
 
     assertEquals(0, workspace.getContainedResources().size());
     assertEquals(0, workspace.getHMASPlatforms().size());

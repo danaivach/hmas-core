@@ -1,12 +1,17 @@
 package ch.unisg.ics.interactions.hmas.core.io;
 
 import ch.unisg.ics.interactions.hmas.core.hostables.*;
-import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
 import java.io.IOException;
@@ -25,8 +30,17 @@ public class ResourceProfileGraphReader {
   private final ValueFactory rdf = SimpleValueFactory.getInstance();
   protected Model model;
 
-  protected ResourceProfileGraphReader() {
-    profileIRI = null;
+  protected ResourceProfileGraphReader(RDFFormat format, String representation) {
+
+    loadModel(format, representation);
+
+    Optional<Resource> locatedProfile = Models.subject(model.filter(null, RDF.TYPE, RESOURCE_PROFILE));
+    if (locatedProfile.isPresent()) {
+      this.profileIRI = locatedProfile.get();
+    } else {
+      throw new InvalidResourceProfileException("Resource profile was not found. " +
+              "Ensure that an " + NAMESPACE + "ResourceProfile is represented.");
+    }
   }
 
   public static ResourceProfile readFromFile(String path) throws IOException {
@@ -36,32 +50,18 @@ public class ResourceProfileGraphReader {
 
   /* Currently, the only supported format is Turtle */
   public static ResourceProfile readFromString(String representation) {
-    ResourceProfileGraphReader reader = new ResourceProfileGraphReader(RDFFormat.TURTLE, representation);;
+    ResourceProfileGraphReader reader = new ResourceProfileGraphReader(RDFFormat.TURTLE, representation);
 
     ResourceProfile.Builder profileBuilder =
-      new ResourceProfile.Builder(reader.readOwnerResource())
-        .addHMASPlatforms(reader.readHomeHMASPlatforms());
-        //.exposeSignifiers(reader.readSignifiers());
+            new ResourceProfile.Builder(reader.readOwnerResource())
+                    .addHMASPlatforms(reader.readHomeHMASPlatforms());
 
-    Optional<IRI>  profileIRI = reader.readProfileIRI();
+    Optional<IRI> profileIRI = reader.readProfileIRI();
     if (profileIRI.isPresent()) {
       profileBuilder.setIRI(profileIRI.get());
     }
 
     return profileBuilder.build();
-  }
-
-  protected ResourceProfileGraphReader(RDFFormat format, String representation) {
-
-    loadModel(format, representation);
-
-    Optional<Resource> locatedProfile = Models.subject(model.filter(null, RDF.TYPE, RESOURCE_PROFILE.toIRI()));
-    if (locatedProfile.isPresent()) {
-      this.profileIRI = locatedProfile.get();
-    } else {
-      throw new InvalidResourceProfileException("Resource profile was not found. " +
-        "Ensure that an " + PREFIX.toIRI() + "ResourceProfile is represented.");
-    }
   }
 
   private void loadModel(RDFFormat format, String representation) {
@@ -81,17 +81,17 @@ public class ResourceProfileGraphReader {
 
     Set<IRI> types = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
 
-    if (types.contains(AGENT.toIRI())) {
+    if (types.contains(AGENT)) {
       return readAgent(node);
-    } else if (types.contains(ARTIFACT.toIRI())) {
+    } else if (types.contains(ARTIFACT)) {
       return readArtifact(node);
-    } else if (types.contains(WORKSPACE.toIRI())) {
+    } else if (types.contains(WORKSPACE)) {
       return readWorkspace(node);
-    } else if (types.contains(HMAS_PLATFORM.toIRI())) {
+    } else if (types.contains(HMAS_PLATFORM)) {
       return readHMASPlatform(node);
     }
     throw new InvalidResourceProfileException("Unknown type of profiled resource. " +
-      "Supported resource types: Agent, Artifact, Workspace, Platform.");
+            "Supported resource types: Agent, Artifact, Workspace, Platform.");
   }
 
   protected Agent readAgent(Resource node) {
@@ -106,7 +106,7 @@ public class ResourceProfileGraphReader {
 
   private Workspace readWorkspace(Resource node) {
     Workspace.Builder builder = new Workspace.Builder();
-    Set<Resource> containedNodes = Models.objectResources(model.filter(node, CONTAINS.toIRI(), null));
+    Set<Resource> containedNodes = Models.objectResources(model.filter(node, CONTAINS, null));
     for (Resource hostedNode : containedNodes) {
       builder.addContainedResource(readResource(hostedNode));
     }
@@ -115,14 +115,14 @@ public class ResourceProfileGraphReader {
 
   private HypermediaMASPlatform readHMASPlatform(Resource node) {
     HypermediaMASPlatform.Builder builder = new HypermediaMASPlatform.Builder();
-    Set<Resource> hostedNodes = Models.objectResources(model.filter(node, HOSTS.toIRI(), null));
+    Set<Resource> hostedNodes = Models.objectResources(model.filter(node, HOSTS, null));
     for (Resource hostedNode : hostedNodes) {
       builder.addHostedResource(readResource(hostedNode));
     }
     return (HypermediaMASPlatform) readArtifact(builder, node);
   }
 
-  private Artifact readArtifact(Artifact.AbstractBuilder<?,?> builder, Resource node) {
+  private Artifact readArtifact(Artifact.AbstractBuilder<?, ?> builder, Resource node) {
     return (Artifact) readProfiledResource(builder, node);
   }
 
@@ -130,11 +130,11 @@ public class ResourceProfileGraphReader {
     return (AbstractProfiledResource) readHostable(builder, node);
   }
 
-  private AbstractHostable readHostable(AbstractHostable.AbstractBuilder<?,?> builder, Resource node) {
+  private AbstractHostable readHostable(AbstractHostable.AbstractBuilder<?, ?> builder, Resource node) {
     if (node.isIRI()) {
       builder.setIRI(SimpleValueFactory.getInstance().createIRI(node.stringValue()));
     }
-    Set<Resource> platformNodes = Models.objectResources(model.filter(node, IS_HOSTED_ON.toIRI(), null));
+    Set<Resource> platformNodes = Models.objectResources(model.filter(node, IS_HOSTED_ON, null));
     for (Resource platformNode : platformNodes) {
       builder.addHMASPlatform(readHMASPlatform(platformNode));
     }
@@ -142,7 +142,7 @@ public class ResourceProfileGraphReader {
   }
 
   protected final AbstractProfiledResource readOwnerResource() {
-    Optional<Resource> node = Models.objectResource(model.filter(profileIRI, IS_PROFILE_OF.toIRI(), null));
+    Optional<Resource> node = Models.objectResource(model.filter(profileIRI, IS_PROFILE_OF, null));
     if (node.isPresent()) {
       return (AbstractProfiledResource) readResource(node.get());
     }
@@ -151,7 +151,7 @@ public class ResourceProfileGraphReader {
 
   protected final Set<HypermediaMASPlatform> readHomeHMASPlatforms() {
     Set<HypermediaMASPlatform> platforms = new HashSet<>();
-    Set<Resource> platformNodes = Models.objectResources(model.filter(profileIRI, IS_HOSTED_ON.toIRI(), null));
+    Set<Resource> platformNodes = Models.objectResources(model.filter(profileIRI, IS_HOSTED_ON, null));
     for (Resource platformNode : platformNodes) {
       platforms.add(readHMASPlatform(platformNode));
     }

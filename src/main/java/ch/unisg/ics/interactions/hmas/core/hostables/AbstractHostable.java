@@ -38,7 +38,7 @@ public abstract class AbstractHostable {
   }
 
   protected AbstractHostable(final AbstractBuilder builder) {
-    this(CORE.HOSTABLE, builder);
+    this(CORE.TERM.HOSTABLE, builder);
   }
 
   public Set<HypermediaMASPlatform> getHMASPlatforms() {

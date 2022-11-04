@@ -17,8 +17,11 @@ final class ReadWriteUtils {
 
   private final static Logger LOGGER = Logger.getLogger(ReadWriteUtils.class.getCanonicalName());
 
+  private ReadWriteUtils() {
+  }
+
   static Model readModelFromString(RDFFormat format, String description, String baseURI)
-    throws RDFParseException, RDFHandlerException, IOException {
+          throws RDFParseException, RDFHandlerException, IOException {
     StringReader stringReader = new StringReader(description);
 
     RDFParser rdfParser = Rio.createParser(format);
@@ -35,7 +38,7 @@ final class ReadWriteUtils {
 
     try {
       Rio.write(model, out, format,
-        new WriterConfig().set(BasicWriterSettings.INLINE_BLANK_NODES, true));
+              new WriterConfig().set(BasicWriterSettings.INLINE_BLANK_NODES, true));
     } finally {
       try {
         out.close();
@@ -46,6 +49,4 @@ final class ReadWriteUtils {
 
     return out.toString();
   }
-
-  private ReadWriteUtils() { }
 }

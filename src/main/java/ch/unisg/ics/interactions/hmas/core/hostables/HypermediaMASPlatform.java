@@ -10,7 +10,7 @@ public class HypermediaMASPlatform extends Artifact {
   private final Set<AbstractHostable> hostedResources;
 
   protected HypermediaMASPlatform(AbstractBuilder builder) {
-    super(CORE.HMAS_PLATFORM, builder);
+    super(CORE.TERM.HMAS_PLATFORM, builder);
     this.hostedResources = ImmutableSet.copyOf(builder.hostedResources);
   }
 
@@ -26,7 +26,7 @@ public class HypermediaMASPlatform extends Artifact {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends HypermediaMASPlatform>
-    extends Artifact.AbstractBuilder<S, T> {
+          extends Artifact.AbstractBuilder<S, T> {
 
     protected final Set<AbstractHostable> hostedResources;
 

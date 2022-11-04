@@ -11,7 +11,7 @@ public class Workspace extends Artifact {
   private final Set<AbstractHostable> containedResources;
 
   protected Workspace(AbstractBuilder builder) {
-    super(CORE.WORKSPACE, builder);
+    super(CORE.TERM.WORKSPACE, builder);
     this.containedResources = ImmutableSet.copyOf(builder.containedResources);
   }
 
@@ -27,7 +27,7 @@ public class Workspace extends Artifact {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Workspace>
-    extends Artifact.AbstractBuilder<S, T> {
+          extends Artifact.AbstractBuilder<S, T> {
 
     private final Set<AbstractHostable> containedResources;
 

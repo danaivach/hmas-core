@@ -22,20 +22,20 @@ public class ResourceProfileGraphReaderTest {
   private final static Logger LOGGER = Logger.getLogger(ResourceProfileGraphReaderTest.class.getCanonicalName());
 
   private static final String PREFIXES =
-    "@prefix hmas: <" + CORE.PREFIX + "> \n" ;
+          "@prefix hmas: <" + CORE.NAMESPACE + "> \n";
 
   @Test
   public void testReadResourceProfileIRI() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf <urn:agent> .\n" +
-      "<urn:agent> a hmas:Agent .";
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:agent> .\n" +
+            "<urn:agent> a hmas:Agent .";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
-    assertEquals(CORE.RESOURCE_PROFILE, profile.getType());
+    assertEquals(CORE.RESOURCE_PROFILE, profile.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
     assertEquals("urn:profile", profile.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:profile"), profile.getIRI().get());
@@ -44,55 +44,55 @@ public class ResourceProfileGraphReaderTest {
   @Test
   public void testReadResourceProfileBNode() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "[] a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf <urn:agent> .\n" +
-      "<urn:agent> a hmas:Agent .";
+            ".\n" +
+            "[] a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:agent> .\n" +
+            "<urn:agent> a hmas:Agent .";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
-    assertEquals(CORE.RESOURCE_PROFILE, profile.getType());
+    assertEquals(CORE.RESOURCE_PROFILE, profile.getTypeAsIRI());
     assertFalse(profile.getIRI().isPresent());
   }
 
   @Test
   public void testReadResourceProfileMissing() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "[] a <http://example.org/unknown#ResourceProfile> .";
+            ".\n" +
+            "[] a <http://example.org/unknown#ResourceProfile> .";
 
     Exception ex = assertThrows(InvalidResourceProfileException.class, () -> {
       ResourceProfileGraphReader.readFromString(expectedProfile);
     });
 
     String expectedMessage = "Resource profile was not found. " +
-      "Ensure that an https://purl.org/hmas/core#ResourceProfile is represented.";
+            "Ensure that an https://purl.org/hmas/core#ResourceProfile is represented.";
     assertTrue(ex.getMessage().contains(expectedMessage));
   }
 
   @Test
   public void testReadResourceProfileMissingOwner() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "[] a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf <urn:agent> .\n" +
-      "<urn:agent> a <http://example.org/unknown#Agent> .";
+            ".\n" +
+            "[] a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:agent> .\n" +
+            "<urn:agent> a <http://example.org/unknown#Agent> .";
 
     Exception ex = assertThrows(InvalidResourceProfileException.class, () -> {
       ResourceProfileGraphReader.readFromString(expectedProfile);
     });
 
     String expectedMessage = "Unknown type of profiled resource. " +
-    "Supported resource types: Agent, Artifact, Workspace, Platform.";
+            "Supported resource types: Agent, Artifact, Workspace, Platform.";
     assertTrue(ex.getMessage().contains(expectedMessage));
   }
 
   @Test
   public void testReadResourceProfileUknownOwnerType() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "[] a hmas:ResourceProfile .";
+            ".\n" +
+            "[] a hmas:ResourceProfile .";
 
     Exception ex = assertThrows(InvalidResourceProfileException.class, () -> {
       ResourceProfileGraphReader.readFromString(expectedProfile);
@@ -106,14 +106,14 @@ public class ResourceProfileGraphReaderTest {
   public void testReadResourceProfileFromFile() throws IOException, URISyntaxException {
 
     URL fileResource = ResourceProfileGraphReaderTest.class.getClassLoader()
-      .getResource("resource-profile.ttl");
+            .getResource("resource-profile.ttl");
 
     String profilePath = Paths.get(fileResource.toURI()).toFile().getPath();
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromFile(profilePath);
+            ResourceProfileGraphReader.readFromFile(profilePath);
 
     AbstractProfiledResource agent = profile.getResource();
-    assertEquals(AGENT, agent.getType());
+    assertEquals(AGENT, agent.getTypeAsIRI());
     assertTrue(agent.getIRI().isPresent());
     assertEquals("urn:agent", agent.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:agent"), agent.getIRI().get());
@@ -122,16 +122,16 @@ public class ResourceProfileGraphReaderTest {
   @Test
   public void testReadResourceProfileOfAgentIRI() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf <urn:agent> .\n" +
-      "<urn:agent> a hmas:Agent .";
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:agent> .\n" +
+            "<urn:agent> a hmas:Agent .";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
     AbstractProfiledResource agent = profile.getResource();
-    assertEquals(AGENT, agent.getType());
+    assertEquals(AGENT, agent.getTypeAsIRI());
     assertTrue(agent.getIRI().isPresent());
     assertEquals("urn:agent", agent.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:agent"), agent.getIRI().get());
@@ -140,46 +140,46 @@ public class ResourceProfileGraphReaderTest {
   @Test
   public void testReadResourceProfileOfAgentBlankNode() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf [ a hmas:Agent ] .";
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf [ a hmas:Agent ] .";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
     AbstractProfiledResource agent = profile.getResource();
-    assertEquals(AGENT, agent.getType());
+    assertEquals(AGENT, agent.getTypeAsIRI());
     assertFalse(agent.getIRI().isPresent());
   }
 
   @Test
   public void testReadResourceProfileOfArtifact() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf [ a hmas:Artifact ] .";
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf [ a hmas:Artifact ] .";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
     AbstractProfiledResource artifact = profile.getResource();
-    assertEquals(CORE.ARTIFACT, artifact.getType());
+    assertEquals(CORE.ARTIFACT, artifact.getTypeAsIRI());
     assertFalse(artifact.getIRI().isPresent());
   }
 
   @Test
   public void testReadResourceProfileOfHMASPlatform() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf <urn:platform> ;\n" +
-      " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] .\n" +
-      "<urn:platform> a hmas:HypermediaMASPlatform ;\n" +
-      " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] ;\n" +
-      " hmas:hosts [ a hmas:Agent ] .\n";
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:platform> ;\n" +
+            " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] .\n" +
+            "<urn:platform> a hmas:HypermediaMASPlatform ;\n" +
+            " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] ;\n" +
+            " hmas:hosts [ a hmas:Agent ] .\n";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
     Set<HypermediaMASPlatform> homePlatforms = profile.getHMASPlatforms();
     assertEquals(1, homePlatforms.size());
@@ -188,7 +188,7 @@ public class ResourceProfileGraphReaderTest {
     assertEquals(0, homePlatform.getHostedResources().size());
 
     AbstractProfiledResource ownerResource = profile.getResource();
-    assertEquals(CORE.HMAS_PLATFORM, ownerResource.getType());
+    assertEquals(CORE.HMAS_PLATFORM, ownerResource.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
     assertEquals("urn:platform", ownerResource.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:platform"), ownerResource.getIRI().get());
@@ -197,7 +197,7 @@ public class ResourceProfileGraphReaderTest {
     HypermediaMASPlatform ownerPlatform = (HypermediaMASPlatform) ownerResource;
     assertEquals(1, ownerPlatform.getHostedResources().size());
     AbstractHostable hostedResource = ownerPlatform.getHostedResources().iterator().next();
-    assertEquals(AGENT, hostedResource.getType());
+    assertEquals(AGENT, hostedResource.getTypeAsIRI());
   }
 
   //TODO Pass test
@@ -233,25 +233,25 @@ public class ResourceProfileGraphReaderTest {
   @Test
   public void testReadResourceProfileOfWorkspace() {
     String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf <urn:workspace> .\n" +
-      "<urn:workspace> a hmas:Workspace ;\n" +
-      " hmas:contains [ a hmas:Agent ],\n" +
-      "  [ a hmas:Workspace ;\n" +
-      "  hmas:contains [ a hmas:HypermediaMASPlatform ;\n" +
-      "   hmas:hosts [ a hmas:Artifact ]\n" +
-      "   ]\n" +
-      "  ] .";
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:workspace> .\n" +
+            "<urn:workspace> a hmas:Workspace ;\n" +
+            " hmas:contains [ a hmas:Agent ],\n" +
+            "  [ a hmas:Workspace ;\n" +
+            "  hmas:contains [ a hmas:HypermediaMASPlatform ;\n" +
+            "   hmas:hosts [ a hmas:Artifact ]\n" +
+            "   ]\n" +
+            "  ] .";
 
     ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
+            ResourceProfileGraphReader.readFromString(expectedProfile);
 
     Set<HypermediaMASPlatform> homePlatforms = profile.getHMASPlatforms();
     assertEquals(0, homePlatforms.size());
 
     AbstractProfiledResource ownerResource = profile.getResource();
-    assertEquals(WORKSPACE, ownerResource.getType());
+    assertEquals(WORKSPACE, ownerResource.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
     assertEquals("urn:workspace", ownerResource.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:workspace"), ownerResource.getIRI().get());
@@ -260,85 +260,30 @@ public class ResourceProfileGraphReaderTest {
     Workspace ownerWorkspace = (Workspace) ownerResource;
     assertEquals(2, ownerWorkspace.getContainedResources().size());
     List<AbstractHostable> containedAgents = ownerWorkspace
-      .getContainedResources()
-      .stream()
-      .filter(contained -> AGENT.equals(contained.getType()))
-      .collect(Collectors.toList());
+            .getContainedResources()
+            .stream()
+            .filter(contained -> AGENT.equals(contained.getTypeAsIRI()))
+            .collect(Collectors.toList());
     assertEquals(1, containedAgents.size());
     assertFalse(containedAgents.get(0).getIRI().isPresent());
 
     List<AbstractHostable> containedWorkspaces = ownerWorkspace
-      .getContainedResources()
-      .stream()
-      .filter(contained -> WORKSPACE.equals(contained.getType()))
-      .collect(Collectors.toList());
+            .getContainedResources()
+            .stream()
+            .filter(contained -> WORKSPACE.equals(contained.getTypeAsIRI()))
+            .collect(Collectors.toList());
     assertEquals(1, containedWorkspaces.size());
     assertFalse(containedWorkspaces.get(0).getIRI().isPresent());
 
     Workspace containedWorkspace = (Workspace) containedWorkspaces.get(0);
     assertEquals(1, containedWorkspace.getContainedResources().size());
     AbstractHostable nestedResource = containedWorkspace.getContainedResources().iterator().next();
-    assertEquals(HMAS_PLATFORM, nestedResource.getType());
+    assertEquals(HMAS_PLATFORM, nestedResource.getTypeAsIRI());
     assertFalse(nestedResource.getIRI().isPresent());
 
     HypermediaMASPlatform nestedPlatform = (HypermediaMASPlatform) nestedResource;
     assertEquals(1, nestedPlatform.getHostedResources().size());
     AbstractHostable hostedArtifact = nestedPlatform.getHostedResources().iterator().next();
-    assertEquals(ARTIFACT, hostedArtifact.getType());
+    assertEquals(ARTIFACT, hostedArtifact.getTypeAsIRI());
   }
-/*
-  @Test
-  public void testReadResourceProfileWithSignifier() {
-    String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf [ a hmas:Artifact ];\n" +
-      " hmas:exposesSignifier [ a hmas:Signifier ].";
-
-    ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
-
-    AbstractProfiledResource artifact = profile.getResource();
-    assertEquals(ARTIFACT, artifact.getType());
-    assertFalse(artifact.getIRI().isPresent());
-
-    assertEquals(1, profile.getExposedSignifiers().size());
-  }
-
- */
-/*
-  @Test
-  public void testReadResourceProfileWithSignifiersWithIRI() {
-    String expectedProfile = PREFIXES +
-      ".\n" +
-      "<urn:profile> a hmas:ResourceProfile ;\n" +
-      " hmas:isProfileOf [ a hmas:Artifact ];\n" +
-      " hmas:exposesSignifier <urn:signifier-1>, [ a hmas:Signifier ].\n" +
-      "<urn:signifier-1> a hmas:Signifier .";
-
-    ResourceProfile profile =
-      ResourceProfileGraphReader.readFromString(expectedProfile);
-
-    AbstractProfiledResource artifact = profile.getResource();
-    assertEquals(ARTIFACT, artifact.getType());
-    assertFalse(artifact.getIRI().isPresent());
-
-    assertEquals(2, profile.getExposedSignifiers().size());
-    List<BaseSignifier> signifiersIRI = profile
-      .getExposedSignifiers()
-      .stream()
-      .filter(signifier -> signifier.getIRI().isPresent())
-      .collect(Collectors.toList());
-    assertEquals(1, signifiersIRI.size());
-    assertEquals("urn:signifier-1", signifiersIRI.get(0).getIRIAsString().get());
-
-    List<BaseSignifier> signifiersBNode = profile
-      .getExposedSignifiers()
-      .stream()
-      .filter(signifier -> !signifier.getIRI().isPresent())
-      .collect(Collectors.toList());
-    assertEquals(1, signifiersBNode.size());
-  }
-
- */
 }

@@ -5,7 +5,7 @@ import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 public class Agent extends AbstractProfiledResource {
 
   protected Agent(AbstractBuilder builder) {
-    super(CORE.AGENT, builder);
+    super(CORE.TERM.AGENT, builder);
   }
 
   public static class Builder extends AbstractBuilder<Builder, Agent> {
@@ -15,7 +15,7 @@ public class Agent extends AbstractProfiledResource {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Agent>
-    extends AbstractProfiledResource.AbstractBuilder<S, T> {
+          extends AbstractProfiledResource.AbstractBuilder<S, T> {
     public abstract T build();
   }
 }

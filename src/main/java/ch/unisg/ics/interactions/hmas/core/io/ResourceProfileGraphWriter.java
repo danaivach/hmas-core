@@ -26,6 +26,10 @@ public class ResourceProfileGraphWriter {
     this.graphBuilder = new ModelBuilder();
   }
 
+  public static String write(ResourceProfile resource) {
+    return new ResourceProfileGraphWriter(resource).write();
+  }
+
   /**
    * Sets a prefix binding for a given namespace.
    *
@@ -44,18 +48,13 @@ public class ResourceProfileGraphWriter {
 
   public String write() {
     return this.addProfileIRI()
-      .addOwnerResource()
-      .addHomeHMASPlatforms()
-      //.addSignifiers()
-      .write(RDFFormat.TURTLE);
+            .addOwnerResource()
+            .addHomeHMASPlatforms()
+            .write(RDFFormat.TURTLE);
   }
 
   public String write(RDFFormat format) {
     return ReadWriteUtils.writeToString(format, getModel());
-  }
-
-  public static String write(ResourceProfile resource) {
-    return new ResourceProfileGraphWriter(resource).write();
   }
 
   private ResourceProfileGraphWriter addProfileIRI() {
@@ -66,7 +65,7 @@ public class ResourceProfileGraphWriter {
   private ResourceProfileGraphWriter addOwnerResource() {
     AbstractProfiledResource resource = profile.getResource();
     Resource node = resolveHostableLocation(resource);
-    graphBuilder.add(profileIRI, IS_PROFILE_OF.toIRI(), node);
+    graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
     addResource(resource, node);
     return this;
   }
@@ -75,35 +74,21 @@ public class ResourceProfileGraphWriter {
     Set<HypermediaMASPlatform> platforms = profile.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
       Resource node = resolveHostableLocation(platform);
-      graphBuilder.add(profileIRI, IS_HOSTED_ON.toIRI(), node);
+      graphBuilder.add(profileIRI, IS_HOSTED_ON, node);
       addResource(platform, node);
     }
     return this;
   }
-/*
-  protected ResourceProfileGraphWriter addSignifiers() {
-    Set<BaseSignifier> signifiers = profile.getExposedSignifiers();
-    if (!signifiers.isEmpty()) {
-      for (BaseSignifier signifier : signifiers) {
-        Resource locatedSignifier = resolveHostableLocation(signifier);
-        graphBuilder.add(profileIRI, EXPOSES_SIGNIFIER.toIRI(), locatedSignifier);
-        graphBuilder.add(locatedSignifier, RDF.TYPE, SIGNIFIER.toIRI());
-      }
-    }
-    return this;
-  }
-
- */
 
   private ResourceProfileGraphWriter addResource(AbstractHostable resource, Resource node) {
 
-    if (AGENT.equals(resource.getType())) {
+    if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
-    } else if (ARTIFACT.equals(resource.getType())) {
+    } else if (ARTIFACT.equals(resource.getTypeAsIRI())) {
       addArtifact((Artifact) resource, node);
-    } else if (WORKSPACE.equals(resource.getType())) {
+    } else if (WORKSPACE.equals(resource.getTypeAsIRI())) {
       addWorkspace((Workspace) resource, node);
-    } else if (HMAS_PLATFORM.equals(resource.getType())) {
+    } else if (HMAS_PLATFORM.equals(resource.getTypeAsIRI())) {
       addHMASPlatform((HypermediaMASPlatform) resource, node);
     } else {
       addHostable(resource, node);
@@ -125,7 +110,7 @@ public class ResourceProfileGraphWriter {
     Set<AbstractHostable> contained = workspace.getContainedResources();
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
-      graphBuilder.add(node, CONTAINS.toIRI(), containedNode);
+      graphBuilder.add(node, CONTAINS, containedNode);
       addResource(containedResource, containedNode);
     }
     addHostable(workspace, node);
@@ -136,7 +121,7 @@ public class ResourceProfileGraphWriter {
     Set<AbstractHostable> hosted = platform.getHostedResources();
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
-      graphBuilder.add(node, HOSTS.toIRI(), hostedNode);
+      graphBuilder.add(node, HOSTS, hostedNode);
       addResource(hostedResource, hostedNode);
     }
     addHostable(platform, node);
@@ -148,7 +133,7 @@ public class ResourceProfileGraphWriter {
     Set<HypermediaMASPlatform> platforms = resource.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
       Resource platformNode = resolveHostableLocation(platform);
-      graphBuilder.add(node, IS_HOSTED_ON.toIRI() , platformNode);
+      graphBuilder.add(node, IS_HOSTED_ON, platformNode);
       addHMASPlatform(platform, platformNode);
     }
     return this;
