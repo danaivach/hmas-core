@@ -53,7 +53,7 @@ public class CORE {
     WORKSPACE = rdf.createIRI(NAMESPACE + "Workspace");
     HMAS_PLATFORM = rdf.createIRI(NAMESPACE + "HypermediaMASPlatform");
     RESOURCE_PROFILE = rdf.createIRI(NAMESPACE + "ResourceProfile");
-    SIGNIFIER = rdf.createIRI(NAMESPACE + "Signfiier");
+    SIGNIFIER = rdf.createIRI(NAMESPACE + "Signifier");
 
     CONTAINS = rdf.createIRI(NAMESPACE + "contains");
     IS_CONTAINED_IN = rdf.createIRI(NAMESPACE + "isContainedIn");
