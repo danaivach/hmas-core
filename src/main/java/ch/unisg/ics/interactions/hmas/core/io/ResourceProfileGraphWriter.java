@@ -13,14 +13,15 @@ import java.util.Set;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
 
-public class ResourceProfileGraphWriter {
+public class ResourceProfileGraphWriter<T extends ResourceProfile> {
 
   protected final Resource profileIRI;
-  protected final ResourceProfile profile;
+  protected final T profile;
   protected final ModelBuilder graphBuilder;
   protected final ValueFactory rdf = SimpleValueFactory.getInstance();
 
-  public ResourceProfileGraphWriter(ResourceProfile profile) {
+
+  public ResourceProfileGraphWriter(final T profile) {
     this.profileIRI = resolveHostableLocation(profile);
     this.profile = profile;
     this.graphBuilder = new ModelBuilder();
@@ -57,12 +58,12 @@ public class ResourceProfileGraphWriter {
     return ReadWriteUtils.writeToString(format, getModel());
   }
 
-  private ResourceProfileGraphWriter addProfileIRI() {
+  private ResourceProfileGraphWriter<T> addProfileIRI() {
     graphBuilder.add(profileIRI, RDF.TYPE, profile.getTypeAsIRI());
     return this;
   }
 
-  private ResourceProfileGraphWriter addOwnerResource() {
+  private ResourceProfileGraphWriter<T> addOwnerResource() {
     AbstractProfiledResource resource = profile.getResource();
     Resource node = resolveHostableLocation(resource);
     graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
@@ -70,7 +71,7 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
-  private ResourceProfileGraphWriter addHomeHMASPlatforms() {
+  private ResourceProfileGraphWriter<T> addHomeHMASPlatforms() {
     Set<HypermediaMASPlatform> platforms = profile.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
       Resource node = resolveHostableLocation(platform);
@@ -80,7 +81,7 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
-  private ResourceProfileGraphWriter addResource(AbstractHostable resource, Resource node) {
+  private ResourceProfileGraphWriter<T> addResource(AbstractHostable resource, Resource node) {
 
     if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
@@ -96,17 +97,17 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
-  private ResourceProfileGraphWriter addAgent(Agent agent, Resource node) {
+  private ResourceProfileGraphWriter<T> addAgent(Agent agent, Resource node) {
     addHostable(agent, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter addArtifact(Artifact artifact, Resource node) {
+  private ResourceProfileGraphWriter<T> addArtifact(Artifact artifact, Resource node) {
     addHostable(artifact, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter addWorkspace(Workspace workspace, Resource node) {
+  private ResourceProfileGraphWriter<T> addWorkspace(Workspace workspace, Resource node) {
     Set<AbstractHostable> contained = workspace.getContainedResources();
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
@@ -117,7 +118,7 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
-  private ResourceProfileGraphWriter addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
+  private ResourceProfileGraphWriter<T> addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
     Set<AbstractHostable> hosted = platform.getHostedResources();
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
@@ -128,7 +129,7 @@ public class ResourceProfileGraphWriter {
     return this;
   }
 
-  private ResourceProfileGraphWriter addHostable(AbstractHostable resource, Resource node) {
+  private ResourceProfileGraphWriter<T> addHostable(AbstractHostable resource, Resource node) {
     graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
     Set<HypermediaMASPlatform> platforms = resource.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
@@ -142,5 +143,4 @@ public class ResourceProfileGraphWriter {
   protected Resource resolveHostableLocation(AbstractHostable hostable) {
     return hostable.getIRI().isPresent() ? hostable.getIRI().get() : rdf.createBNode();
   }
-
 }
