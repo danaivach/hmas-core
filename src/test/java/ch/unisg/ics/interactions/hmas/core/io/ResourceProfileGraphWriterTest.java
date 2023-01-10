@@ -175,16 +175,12 @@ public class ResourceProfileGraphWriterTest {
             .setNamespace("hmas", CORE.NAMESPACE)
             .write();
 
-    String actualProfileSt = ResourceProfileGraphWriter.write(profile);
-
     LOGGER.info("Expected:\n" + expectedProfile);
     LOGGER.info("Actual:\n" + actualProfile);
 
     Model actualModel = readModelFromString(actualProfile, BASE_URI);
-    Model actualModelSt = readModelFromString(actualProfileSt, BASE_URI);
 
     assertTrue(Models.isomorphic(expectedModel, actualModel));
-    assertTrue(Models.isomorphic(expectedModel, actualModelSt));
   }
 
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
 
-public class ResourceProfileGraphWriter<T extends ResourceProfile> {
+public class ResourceProfileGraphWriter<T extends ResourceProfile> implements GraphWriter {
 
   protected final Resource profileIRI;
   protected final T profile;
@@ -27,36 +27,37 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
     this.graphBuilder = new ModelBuilder();
   }
 
-  public static String write(ResourceProfile resource) {
-    return new ResourceProfileGraphWriter(resource).write();
+  @Override
+  public String write(RDFFormat format) {
+    return ReadWriteUtils.writeToString(format, getModel());
   }
 
+  @Override
   public String write() {
-    return this.addProfileIRI()
+
+    return this.setNamespace(PREFIX, NAMESPACE)
+            .addProfileIRI()
             .addOwnerResource()
             .addHomeHMASPlatforms()
             .write(RDFFormat.TURTLE);
-  }
-
-  public String write(RDFFormat format) {
-    return ReadWriteUtils.writeToString(format, getModel());
   }
 
   private Model getModel() {
     return graphBuilder.build();
   }
 
+  @Override
   public ResourceProfileGraphWriter setNamespace(String prefix, String namespace) {
     this.graphBuilder.setNamespace(prefix, namespace);
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addProfileIRI() {
+  private ResourceProfileGraphWriter addProfileIRI() {
     graphBuilder.add(profileIRI, RDF.TYPE, profile.getTypeAsIRI());
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addOwnerResource() {
+  private ResourceProfileGraphWriter addOwnerResource() {
     AbstractProfiledResource resource = profile.getResource();
     Resource node = resolveHostableLocation(resource);
     graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
@@ -74,7 +75,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addResource(AbstractHostable resource, Resource node) {
+  private ResourceProfileGraphWriter addResource(AbstractHostable resource, Resource node) {
 
     if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
@@ -90,17 +91,17 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addAgent(Agent agent, Resource node) {
+  private ResourceProfileGraphWriter addAgent(Agent agent, Resource node) {
     addHostable(agent, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addArtifact(Artifact artifact, Resource node) {
+  private ResourceProfileGraphWriter addArtifact(Artifact artifact, Resource node) {
     addHostable(artifact, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addWorkspace(Workspace workspace, Resource node) {
+  private ResourceProfileGraphWriter addWorkspace(Workspace workspace, Resource node) {
     Set<AbstractHostable> contained = workspace.getContainedResources();
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
@@ -111,7 +112,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
+  private ResourceProfileGraphWriter addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
     Set<AbstractHostable> hosted = platform.getHostedResources();
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
@@ -122,7 +123,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addHostable(AbstractHostable resource, Resource node) {
+  private ResourceProfileGraphWriter addHostable(AbstractHostable resource, Resource node) {
     graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
     Set<HypermediaMASPlatform> platforms = resource.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
