@@ -31,22 +31,6 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
     return new ResourceProfileGraphWriter(resource).write();
   }
 
-  /**
-   * Sets a prefix binding for a given namespace.
-   *
-   * @param prefix    the prefix to be used in the serialized representation
-   * @param namespace the given namespace
-   * @return this <code>ResourceProfileGraphWriter</code>
-   */
-  public ResourceProfileGraphWriter setNamespace(String prefix, String namespace) {
-    this.graphBuilder.setNamespace(prefix, namespace);
-    return this;
-  }
-
-  private Model getModel() {
-    return graphBuilder.build();
-  }
-
   public String write() {
     return this.addProfileIRI()
             .addOwnerResource()
@@ -56,6 +40,15 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> {
 
   public String write(RDFFormat format) {
     return ReadWriteUtils.writeToString(format, getModel());
+  }
+
+  private Model getModel() {
+    return graphBuilder.build();
+  }
+
+  public ResourceProfileGraphWriter setNamespace(String prefix, String namespace) {
+    this.graphBuilder.setNamespace(prefix, namespace);
+    return this;
   }
 
   private ResourceProfileGraphWriter<T> addProfileIRI() {
