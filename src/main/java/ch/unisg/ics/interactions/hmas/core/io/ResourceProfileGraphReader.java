@@ -77,7 +77,7 @@ public class ResourceProfileGraphReader {
     }
   }
 
-  protected final AbstractHostable readResource(Resource node) {
+  protected AbstractHostable readResource(Resource node) {
 
     Set<IRI> types = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
 
@@ -99,7 +99,7 @@ public class ResourceProfileGraphReader {
     return (Agent) readProfiledResource(builder, node);
   }
 
-  private Artifact readArtifact(Resource node) {
+  protected Artifact readArtifact(Resource node) {
     Artifact.Builder builder = new Artifact.Builder();
     return (Artifact) readProfiledResource(builder, node);
   }
@@ -141,7 +141,7 @@ public class ResourceProfileGraphReader {
     return builder.build();
   }
 
-  protected final AbstractProfiledResource readOwnerResource() {
+  protected AbstractProfiledResource readOwnerResource() {
     Optional<Resource> node = Models.objectResource(model.filter(profileIRI, IS_PROFILE_OF, null));
     if (node.isPresent()) {
       return (AbstractProfiledResource) readResource(node.get());
