@@ -166,6 +166,28 @@ public class ResourceProfileGraphWriterTest {
     assertIsomorphicGraphs(expectedProfile, profile);
   }
 
+  @Test
+  public void testWriteResourceProfileSemanticTypes() throws IOException {
+    String expectedProfile = PREFIX +
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile, <https://example.org/onto#TDDocument> ;\n" +
+            " hmas:isProfileOf <urn:artifact> .\n" +
+            "<urn:artifact> a hmas:Artifact, <https://www.w3.org/2019/wot/td#Thing>,  " +
+            " <https://saref.etsi.org/core/Actuator>.";
+
+    ResourceProfile profile =
+            new ResourceProfile.Builder(new Artifact.Builder()
+                    .setIRIAsString("urn:artifact")
+                    .addSemanticType("https://www.w3.org/2019/wot/td#Thing")
+                    .addSemanticType("https://saref.etsi.org/core/Actuator")
+                    .build())
+                    .setIRIAsString("urn:profile")
+                    .addSemanticType("https://example.org/onto#TDDocument")
+                    .build();
+
+    assertIsomorphicGraphs(expectedProfile, profile);
+  }
+
   private void assertIsomorphicGraphs(String expectedProfile, ResourceProfile profile) throws RDFParseException,
           RDFHandlerException, IOException {
 

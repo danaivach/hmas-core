@@ -168,6 +168,29 @@ public class ResourceProfileGraphReaderTest {
   }
 
   @Test
+  public void testReadResourceProfileSemanticTypes() {
+    String expectedProfile = PREFIXES +
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile, <https://example.org/onto#TDDocument> ;\n" +
+            " hmas:isProfileOf [ \n" +
+            "   a hmas:Artifact, <https://www.w3.org/2019/wot/td#Thing>,  " +
+            "     <https://saref.etsi.org/core/Actuator> ] .";
+
+    ResourceProfile profile =
+            ResourceProfileGraphReader.readFromString(expectedProfile);
+
+    assertEquals(2, profile.getSemanticTypes().size());
+    assertTrue(profile.getSemanticTypes().contains("https://example.org/onto#TDDocument"));
+
+    AbstractProfiledResource artifact = profile.getResource();
+    assertEquals(CORE.ARTIFACT, artifact.getTypeAsIRI());
+    assertFalse(artifact.getIRI().isPresent());
+    assertEquals(3, artifact.getSemanticTypes().size());
+    assertTrue(artifact.getSemanticTypes().contains("https://www.w3.org/2019/wot/td#Thing"));
+    assertTrue(artifact.getSemanticTypes().contains("https://saref.etsi.org/core/Actuator"));
+  }
+
+  @Test
   public void testReadResourceProfileOfHMASPlatform() {
     String expectedProfile = PREFIXES +
             ".\n" +

@@ -54,7 +54,8 @@ public class ResourceProfileGraphReader {
 
     ResourceProfile.Builder profileBuilder =
             new ResourceProfile.Builder(reader.readOwnerResource())
-                    .addHMASPlatforms(reader.readHomeHMASPlatforms());
+                    .addHMASPlatforms(reader.readHomeHMASPlatforms())
+                    .addSemanticTypes(reader.readSemanticTypes());
 
     Optional<IRI> profileIRI = reader.readProfileIRI();
     if (profileIRI.isPresent()) {
@@ -130,7 +131,7 @@ public class ResourceProfileGraphReader {
     return (AbstractProfiledResource) readHostable(builder, node);
   }
 
-  private AbstractHostable readHostable(AbstractHostable.AbstractBuilder<?, ?> builder, Resource node) {
+  protected AbstractHostable readHostable(AbstractHostable.AbstractBuilder<?, ?> builder, Resource node) {
     if (node.isIRI()) {
       builder.setIRI(SimpleValueFactory.getInstance().createIRI(node.stringValue()));
     }
@@ -138,6 +139,14 @@ public class ResourceProfileGraphReader {
     for (Resource platformNode : platformNodes) {
       builder.addHMASPlatform(readHMASPlatform(platformNode));
     }
+
+    Set<IRI> semanticTypes = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
+    for (IRI type : semanticTypes) {
+      if (!builder.TYPE.toString().equals(type.stringValue())) {
+        builder.addSemanticType(type.stringValue());
+      }
+    }
+
     return builder.build();
   }
 
@@ -156,6 +165,16 @@ public class ResourceProfileGraphReader {
       platforms.add(readHMASPlatform(platformNode));
     }
     return platforms;
+  }
+
+  protected final Set<String> readSemanticTypes() {
+    Set<String> semanticTypes = new HashSet<>();
+    Set<IRI> semanticTypeIRIs = Models.objectIRIs(model.filter(profileIRI, RDF.TYPE, null));
+    for (IRI type : semanticTypeIRIs) {
+      semanticTypes.add(type.stringValue());
+    }
+
+    return semanticTypes;
   }
 
   protected final Optional<IRI> readProfileIRI() {

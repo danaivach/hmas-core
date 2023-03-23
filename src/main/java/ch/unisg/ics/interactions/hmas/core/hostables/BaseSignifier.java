@@ -1,6 +1,7 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
 public class BaseSignifier extends AbstractHostable {
 
@@ -9,6 +10,8 @@ public class BaseSignifier extends AbstractHostable {
   }
 
   public static class Builder extends AbstractBuilder<Builder, BaseSignifier> {
+    public static final HMAS TYPE = CORE.TERM.SIGNIFIER;
+
     public BaseSignifier build() {
       return new BaseSignifier(this);
     }

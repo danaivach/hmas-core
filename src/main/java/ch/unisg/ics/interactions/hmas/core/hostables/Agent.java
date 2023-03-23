@@ -1,6 +1,7 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
 public class Agent extends AbstractProfiledResource {
 
@@ -9,6 +10,8 @@ public class Agent extends AbstractProfiledResource {
   }
 
   public static class Builder extends AbstractBuilder<Builder, Agent> {
+    public static final HMAS TYPE = CORE.TERM.AGENT;
+
     public Agent build() {
       return new Agent(this);
     }

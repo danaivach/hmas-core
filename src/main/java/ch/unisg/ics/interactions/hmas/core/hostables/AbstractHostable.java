@@ -23,6 +23,7 @@ public abstract class AbstractHostable {
   private final transient Set<HypermediaMASPlatform> platforms;
   private final Optional<String> IRI;
   private final HMAS type;
+  private final Set<String> semanticTypes;
 
   /**
    * Construct a hostable resource.
@@ -35,6 +36,7 @@ public abstract class AbstractHostable {
     this.type = type;
     this.IRI = builder.IRI;
     this.platforms = ImmutableSet.copyOf(builder.platforms);
+    this.semanticTypes = ImmutableSet.copyOf(builder.semanticTypes);
   }
 
   protected AbstractHostable(final AbstractBuilder builder) {
@@ -43,6 +45,10 @@ public abstract class AbstractHostable {
 
   public Set<HypermediaMASPlatform> getHMASPlatforms() {
     return this.platforms;
+  }
+
+  public Set<String> getSemanticTypes() {
+    return this.semanticTypes;
   }
 
   public String getTypeAsString() {
@@ -70,12 +76,15 @@ public abstract class AbstractHostable {
 
   public static abstract class AbstractBuilder<S extends AbstractBuilder, T extends AbstractHostable> {
 
+    public static final HMAS TYPE = CORE.TERM.HOSTABLE;
+    protected final Set<String> semanticTypes;
     private final transient Set<HypermediaMASPlatform> platforms;
     private Optional<String> IRI;
 
     protected AbstractBuilder() {
       this.platforms = new HashSet<>();
       this.IRI = Optional.empty();
+      this.semanticTypes = new HashSet<>();
     }
 
     private static boolean validateIRI(String IRI) {
@@ -109,6 +118,16 @@ public abstract class AbstractHostable {
     public S setIRIAsString(final String IRI) {
       validateIRI(IRI);
       this.IRI = Optional.of(IRI);
+      return (S) this;
+    }
+
+    public S addSemanticType(final String type) {
+      this.semanticTypes.add(type);
+      return (S) this;
+    }
+
+    public S addSemanticTypes(final Set<String> types) {
+      this.semanticTypes.addAll(types);
       return (S) this;
     }
 

@@ -14,6 +14,8 @@ public class Artifact extends AbstractProfiledResource {
   }
 
   public static class Builder extends AbstractBuilder<Builder, Artifact> {
+    public static final HMAS TYPE = CORE.TERM.ARTIFACT;
+
     public Artifact build() {
       return new Artifact(this);
     }

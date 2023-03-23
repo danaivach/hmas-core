@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,5 +68,26 @@ public class HostableTest {
     assertThrows(UnsupportedOperationException.class, () -> {
       agent.getHMASPlatforms().add(null);
     });
+  }
+
+  @Test
+  public void testHostableSemanticTypes() {
+    Agent.Builder builder = new Agent.Builder();
+
+    List<String> types = Arrays.asList("http:example.org/onto/AgentType1",
+            "http:example.org/onto/AgentType2");
+    List<String> moreTypes = Arrays.asList("http:example.org/onto/AgentType3",
+            "http:example.org/onto/AgentType4");
+
+    builder.addSemanticTypes(new HashSet<>(types));
+    builder.addSemanticType("http:example.org/ontology/BDIAgent");
+    builder.addSemanticTypes(new HashSet<>(moreTypes));
+
+    Agent agent = builder.build();
+    assertEquals(5, agent.getSemanticTypes().size());
+    assertTrue(agent.getSemanticTypes().containsAll(types));
+    assertTrue(agent.getSemanticTypes().contains("http:example.org/ontology/BDIAgent"));
+    assertTrue(agent.getSemanticTypes().contains("http:example.org/onto/AgentType3"));
+    assertTrue(agent.getSemanticTypes().contains("http:example.org/onto/AgentType4"));
   }
 }

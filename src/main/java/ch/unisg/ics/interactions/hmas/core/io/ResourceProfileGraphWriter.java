@@ -37,6 +37,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
 
     return this.setNamespace(PREFIX, NAMESPACE)
             .addProfileIRI()
+            .addSemanticTypes()
             .addOwnerResource()
             .addHomeHMASPlatforms()
             .write(RDFFormat.TURTLE);
@@ -53,14 +54,22 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
   }
 
   private ResourceProfileGraphWriter addProfileIRI() {
-    graphBuilder.add(profileIRI, RDF.TYPE, profile.getTypeAsIRI());
+    this.graphBuilder.add(profileIRI, RDF.TYPE, profile.getTypeAsIRI());
+    return this;
+  }
+
+  public ResourceProfileGraphWriter addSemanticTypes() {
+    Set<String> semanticTypes = this.profile.getSemanticTypes();
+    for (String type : semanticTypes) {
+      this.graphBuilder.add(profileIRI, RDF.TYPE, rdf.createIRI(type));
+    }
     return this;
   }
 
   private ResourceProfileGraphWriter addOwnerResource() {
     AbstractProfiledResource resource = profile.getResource();
     Resource node = resolveHostableLocation(resource);
-    graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
+    this.graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
     addResource(resource, node);
     return this;
   }
@@ -123,13 +132,19 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     return this;
   }
 
-  private ResourceProfileGraphWriter addHostable(AbstractHostable resource, Resource node) {
+  protected ResourceProfileGraphWriter addHostable(AbstractHostable resource, Resource node) {
     graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
+
     Set<HypermediaMASPlatform> platforms = resource.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
       Resource platformNode = resolveHostableLocation(platform);
       graphBuilder.add(node, IS_HOSTED_ON, platformNode);
       addHMASPlatform(platform, platformNode);
+    }
+
+    Set<String> semanticTypes = resource.getSemanticTypes();
+    for (String type : semanticTypes) {
+      graphBuilder.add(node, RDF.TYPE, rdf.createIRI(type));
     }
     return this;
   }
