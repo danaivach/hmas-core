@@ -1,4 +1,4 @@
-@prefix hmas: <https://purl.org/hmas/core#> .
+@prefix hmas: <https://purl.org/hmas/> .
 
 <urn:profile> a hmas:ResourceProfile;
   hmas:isProfileOf <urn:agent> .

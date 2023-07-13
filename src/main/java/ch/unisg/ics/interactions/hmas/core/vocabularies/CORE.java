@@ -6,7 +6,7 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 public class CORE {
 
-  public static final String NAMESPACE = "https://purl.org/hmas/core#";
+  public static final String NAMESPACE = "https://purl.org/hmas/";
 
   public static final String PREFIX = "hmas";
 

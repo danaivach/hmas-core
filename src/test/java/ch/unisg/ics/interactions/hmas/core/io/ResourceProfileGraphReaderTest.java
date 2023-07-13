@@ -67,7 +67,7 @@ public class ResourceProfileGraphReaderTest {
     });
 
     String expectedMessage = "Resource profile was not found. " +
-            "Ensure that an https://purl.org/hmas/core#ResourceProfile is represented.";
+            "Ensure that an https://purl.org/hmas/ResourceProfile is represented.";
     assertTrue(ex.getMessage().contains(expectedMessage));
   }
 
