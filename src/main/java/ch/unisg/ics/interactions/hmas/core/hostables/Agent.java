@@ -3,7 +3,7 @@ package ch.unisg.ics.interactions.hmas.core.hostables;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
-public class Agent extends AbstractProfiledResource {
+public class Agent extends AbstractHostable implements ProfiledResource {
 
   protected Agent(AbstractBuilder builder) {
     super(CORE.TERM.AGENT, builder);
@@ -18,7 +18,7 @@ public class Agent extends AbstractProfiledResource {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Agent>
-          extends AbstractProfiledResource.AbstractBuilder<S, T> {
+          extends AbstractHostable.AbstractBuilder<S, T> {
     public abstract T build();
   }
 }

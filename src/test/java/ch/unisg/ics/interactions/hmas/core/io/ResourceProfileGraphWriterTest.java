@@ -90,14 +90,12 @@ public class ResourceProfileGraphWriterTest {
             " hmas:isProfileOf <urn:platform> ;\n" +
             " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] .\n" +
             "<urn:platform> a hmas:HypermediaMASPlatform ;\n" +
-            " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] ;\n" +
             " hmas:hosts [ a hmas:Agent ] .\n";
 
     ResourceProfile profile =
             new ResourceProfile.Builder(
                     new HypermediaMASPlatform.Builder().setIRIAsString("urn:platform")
                             .addHostedResource(new Agent.Builder().build())
-                            .addHMASPlatform(new HypermediaMASPlatform.Builder().build())
                             .build())
                     .addHMASPlatform(new HypermediaMASPlatform.Builder().build())
                     .setIRIAsString("urn:profile")
@@ -114,7 +112,6 @@ public class ResourceProfileGraphWriterTest {
             " hmas:isProfileOf <urn:platform> ;\n" +
             " hmas:isHostedOn <urn:super-platform> .\n" +
             "<urn:platform> a hmas:HypermediaMASPlatform ;\n" +
-            " hmas:isHostedOn <urn:super-platform> ;\n" +
             " hmas:hosts [ a hmas:Agent ] .\n" +
             "<urn:super-platform> a hmas:HypermediaMASPlatform .";
 
@@ -126,8 +123,7 @@ public class ResourceProfileGraphWriterTest {
     ResourceProfile profile =
             new ResourceProfile.Builder(
                     new HypermediaMASPlatform.Builder().setIRIAsString("urn:platform")
-                            .addHostedResource(new Agent.Builder().build())
-                            .addHMASPlatform(superPlatform).build())
+                            .addHostedResource(new Agent.Builder().build()).build())
                     .addHMASPlatform(superPlatform)
                     .setIRIAsString("urn:profile")
                     .build();
@@ -142,24 +138,12 @@ public class ResourceProfileGraphWriterTest {
             "<urn:profile> a hmas:ResourceProfile ;\n" +
             " hmas:isProfileOf <urn:workspace> .\n" +
             "<urn:workspace> a hmas:Workspace ;\n" +
-            " hmas:contains [ a hmas:Agent ],\n" +
-            "  [ a hmas:Workspace ;\n" +
-            "  hmas:contains [ a hmas:HypermediaMASPlatform ;\n" +
-            "   hmas:hosts [ a hmas:Artifact ]\n" +
-            "   ]\n" +
-            "  ] .";
+            " hmas:contains [ a hmas:Agent ].";
 
     ResourceProfile profile =
             new ResourceProfile.Builder(new Workspace.Builder()
                     .setIRIAsString("urn:workspace")
-                    .addContainedResource(new Agent.Builder().build())
-                    .addContainedResource(
-                            new Workspace.Builder()
-                                    .addContainedResource(new HypermediaMASPlatform.Builder()
-                                            .addHostedResource(new Artifact.Builder().build())
-                                            .build())
-                                    .build())
-                    .build())
+                    .addContainedResource(new Agent.Builder().build()).build())
                     .setIRIAsString("urn:profile")
                     .build();
 
