@@ -67,10 +67,10 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
   }
 
   private ResourceProfileGraphWriter addOwnerResource() {
-    AbstractProfiledResource resource = profile.getResource();
+    AbstractResource resource = profile.getResource();
     Resource node = resolveHostableLocation(resource);
     this.graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
-    addResource(resource, node);
+    writeResource(resource, node);
     return this;
   }
 
@@ -79,12 +79,12 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     for (HypermediaMASPlatform platform : platforms) {
       Resource node = resolveHostableLocation(platform);
       graphBuilder.add(profileIRI, IS_HOSTED_ON, node);
-      addResource(platform, node);
+      writeResource(platform, node);
     }
     return this;
   }
 
-  private ResourceProfileGraphWriter addResource(AbstractHostable resource, Resource node) {
+  private ResourceProfileGraphWriter writeResource(AbstractResource resource, Resource node) {
 
     if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
@@ -95,7 +95,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     } else if (HMAS_PLATFORM.equals(resource.getTypeAsIRI())) {
       addHMASPlatform((HypermediaMASPlatform) resource, node);
     } else {
-      addHostable(resource, node);
+      addResource(resource, node);
     }
     return this;
   }
@@ -115,7 +115,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
       graphBuilder.add(node, CONTAINS, containedNode);
-      addResource(containedResource, containedNode);
+      writeResource(containedResource, containedNode);
     }
     addHostable(workspace, node);
     return this;
@@ -126,9 +126,9 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
       graphBuilder.add(node, HOSTS, hostedNode);
-      addResource(hostedResource, hostedNode);
+      writeResource(hostedResource, hostedNode);
     }
-    addHostable(platform, node);
+    addResource(platform, node);
     return this;
   }
 
@@ -146,10 +146,22 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     for (String type : semanticTypes) {
       graphBuilder.add(node, RDF.TYPE, rdf.createIRI(type));
     }
+
+    addResource(resource, node);
     return this;
   }
 
-  protected Resource resolveHostableLocation(AbstractHostable hostable) {
-    return hostable.getIRI().isPresent() ? hostable.getIRI().get() : rdf.createBNode();
+  protected ResourceProfileGraphWriter addResource(AbstractResource resource, Resource node) {
+    graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
+
+    Set<String> semanticTypes = resource.getSemanticTypes();
+    for (String type : semanticTypes) {
+      graphBuilder.add(node, RDF.TYPE, rdf.createIRI(type));
+    }
+    return this;
+  }
+
+  protected Resource resolveHostableLocation(AbstractResource resource) {
+    return resource.getIRI().isPresent() ? resource.getIRI().get() : rdf.createBNode();
   }
 }

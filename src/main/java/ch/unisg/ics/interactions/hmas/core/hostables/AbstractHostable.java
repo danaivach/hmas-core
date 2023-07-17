@@ -3,11 +3,9 @@ package ch.unisg.ics.interactions.hmas.core.hostables;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 import com.google.common.collect.ImmutableSet;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -15,15 +13,12 @@ import java.util.Set;
  * MAS platforms, workspaces, resource profiles, signifiers, organizations, can
  * be hosted on a MAS platform.
  */
-public abstract class AbstractHostable {
+public abstract class AbstractHostable extends AbstractResource {
 
   /**
    * The Hypermedia MAS Platform on which the hostable resource is hosted.
    */
   private final transient Set<HypermediaMASPlatform> platforms;
-  private final Optional<String> IRI;
-  private final HMAS type;
-  private final Set<String> semanticTypes;
 
   /**
    * Construct a hostable resource.
@@ -32,11 +27,8 @@ public abstract class AbstractHostable {
    * @return the hostable resource
    */
   protected AbstractHostable(final HMAS type, final AbstractBuilder builder) {
-
-    this.type = type;
-    this.IRI = builder.IRI;
+    super(type, builder);
     this.platforms = ImmutableSet.copyOf(builder.platforms);
-    this.semanticTypes = ImmutableSet.copyOf(builder.semanticTypes);
   }
 
   protected AbstractHostable(final AbstractBuilder builder) {
@@ -47,44 +39,18 @@ public abstract class AbstractHostable {
     return this.platforms;
   }
 
-  public Set<String> getSemanticTypes() {
-    return this.semanticTypes;
-  }
+  public static abstract class AbstractBuilder<S extends AbstractBuilder, T extends AbstractHostable>
+          extends AbstractResource.AbstractBuilder<S, T> {
 
-  public String getTypeAsString() {
-    return this.type.toString();
-  }
-
-  public IRI getTypeAsIRI() {
-    return this.type.toIRI();
-  }
-
-  public HMAS getType() {
-    return this.type;
-  }
-
-  public Optional<IRI> getIRI() {
-    if (this.IRI.isPresent()) {
-      return Optional.of(SimpleValueFactory.getInstance().createIRI(this.IRI.get()));
-    }
-    return Optional.empty();
-  }
-
-  public Optional<String> getIRIAsString() {
-    return this.IRI;
-  }
-
-  public static abstract class AbstractBuilder<S extends AbstractBuilder, T extends AbstractHostable> {
-
-    public static final HMAS TYPE = CORE.TERM.HOSTABLE;
-    protected final Set<String> semanticTypes;
     private final transient Set<HypermediaMASPlatform> platforms;
-    private Optional<String> IRI;
 
     protected AbstractBuilder() {
+      this(CORE.TERM.HOSTABLE);
+    }
+
+    protected AbstractBuilder(HMAS type) {
+      super(type);
       this.platforms = new HashSet<>();
-      this.IRI = Optional.empty();
-      this.semanticTypes = new HashSet<>();
     }
 
     private static boolean validateIRI(String IRI) {
@@ -105,29 +71,6 @@ public abstract class AbstractHostable {
     @SuppressWarnings("unchecked")
     public S addHMASPlatforms(final Set<HypermediaMASPlatform> platforms) {
       this.platforms.addAll(platforms);
-      return (S) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public S setIRI(final IRI IRI) {
-      this.IRI = Optional.of(IRI.toString());
-      return (S) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public S setIRIAsString(final String IRI) {
-      validateIRI(IRI);
-      this.IRI = Optional.of(IRI);
-      return (S) this;
-    }
-
-    public S addSemanticType(final String type) {
-      this.semanticTypes.add(type);
-      return (S) this;
-    }
-
-    public S addSemanticTypes(final Set<String> types) {
-      this.semanticTypes.addAll(types);
       return (S) this;
     }
 

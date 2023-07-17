@@ -14,7 +14,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
+import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.AGENT;
+import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.WORKSPACE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceProfileGraphReaderTest {
@@ -112,7 +113,7 @@ public class ResourceProfileGraphReaderTest {
     ResourceProfile profile =
             ResourceProfileGraphReader.readFromFile(profilePath);
 
-    AbstractProfiledResource agent = profile.getResource();
+    AbstractResource agent = profile.getResource();
     assertEquals(AGENT, agent.getTypeAsIRI());
     assertTrue(agent.getIRI().isPresent());
     assertEquals("urn:agent", agent.getIRIAsString().get());
@@ -130,7 +131,7 @@ public class ResourceProfileGraphReaderTest {
     ResourceProfile profile =
             ResourceProfileGraphReader.readFromString(expectedProfile);
 
-    AbstractProfiledResource agent = profile.getResource();
+    AbstractResource agent = profile.getResource();
     assertEquals(AGENT, agent.getTypeAsIRI());
     assertTrue(agent.getIRI().isPresent());
     assertEquals("urn:agent", agent.getIRIAsString().get());
@@ -147,7 +148,7 @@ public class ResourceProfileGraphReaderTest {
     ResourceProfile profile =
             ResourceProfileGraphReader.readFromString(expectedProfile);
 
-    AbstractProfiledResource agent = profile.getResource();
+    AbstractResource agent = profile.getResource();
     assertEquals(AGENT, agent.getTypeAsIRI());
     assertFalse(agent.getIRI().isPresent());
   }
@@ -162,7 +163,7 @@ public class ResourceProfileGraphReaderTest {
     ResourceProfile profile =
             ResourceProfileGraphReader.readFromString(expectedProfile);
 
-    AbstractProfiledResource artifact = profile.getResource();
+    AbstractResource artifact = profile.getResource();
     assertEquals(CORE.ARTIFACT, artifact.getTypeAsIRI());
     assertFalse(artifact.getIRI().isPresent());
   }
@@ -182,7 +183,7 @@ public class ResourceProfileGraphReaderTest {
     assertEquals(2, profile.getSemanticTypes().size());
     assertTrue(profile.getSemanticTypes().contains("https://example.org/onto#TDDocument"));
 
-    AbstractProfiledResource artifact = profile.getResource();
+    AbstractResource artifact = profile.getResource();
     assertEquals(CORE.ARTIFACT, artifact.getTypeAsIRI());
     assertFalse(artifact.getIRI().isPresent());
     assertEquals(3, artifact.getSemanticTypes().size());
@@ -198,7 +199,6 @@ public class ResourceProfileGraphReaderTest {
             " hmas:isProfileOf <urn:platform> ;\n" +
             " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] .\n" +
             "<urn:platform> a hmas:HypermediaMASPlatform ;\n" +
-            " hmas:isHostedOn [ a hmas:HypermediaMASPlatform ] ;\n" +
             " hmas:hosts [ a hmas:Agent ] .\n";
 
     ResourceProfile profile =
@@ -210,14 +210,13 @@ public class ResourceProfileGraphReaderTest {
     assertFalse(homePlatform.getIRI().isPresent());
     assertEquals(0, homePlatform.getHostedResources().size());
 
-    AbstractProfiledResource ownerResource = profile.getResource();
+    HypermediaMASPlatform ownerResource = (HypermediaMASPlatform) profile.getResource();
     assertEquals(CORE.HMAS_PLATFORM, ownerResource.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
     assertEquals("urn:platform", ownerResource.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:platform"), ownerResource.getIRI().get());
-    assertEquals(1, ownerResource.getHMASPlatforms().size());
 
-    HypermediaMASPlatform ownerPlatform = (HypermediaMASPlatform) ownerResource;
+    HypermediaMASPlatform ownerPlatform = ownerResource;
     assertEquals(1, ownerPlatform.getHostedResources().size());
     AbstractHostable hostedResource = ownerPlatform.getHostedResources().iterator().next();
     assertEquals(AGENT, hostedResource.getTypeAsIRI());
@@ -261,11 +260,7 @@ public class ResourceProfileGraphReaderTest {
             " hmas:isProfileOf <urn:workspace> .\n" +
             "<urn:workspace> a hmas:Workspace ;\n" +
             " hmas:contains [ a hmas:Agent ],\n" +
-            "  [ a hmas:Workspace ;\n" +
-            "  hmas:contains [ a hmas:HypermediaMASPlatform ;\n" +
-            "   hmas:hosts [ a hmas:Artifact ]\n" +
-            "   ]\n" +
-            "  ] .";
+            "  [ a hmas:Workspace ] .";
 
     ResourceProfile profile =
             ResourceProfileGraphReader.readFromString(expectedProfile);
@@ -273,12 +268,11 @@ public class ResourceProfileGraphReaderTest {
     Set<HypermediaMASPlatform> homePlatforms = profile.getHMASPlatforms();
     assertEquals(0, homePlatforms.size());
 
-    AbstractProfiledResource ownerResource = profile.getResource();
+    AbstractResource ownerResource = profile.getResource();
     assertEquals(WORKSPACE, ownerResource.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
     assertEquals("urn:workspace", ownerResource.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:workspace"), ownerResource.getIRI().get());
-    assertEquals(0, ownerResource.getHMASPlatforms().size());
 
     Workspace ownerWorkspace = (Workspace) ownerResource;
     assertEquals(2, ownerWorkspace.getContainedResources().size());
@@ -299,14 +293,6 @@ public class ResourceProfileGraphReaderTest {
     assertFalse(containedWorkspaces.get(0).getIRI().isPresent());
 
     Workspace containedWorkspace = (Workspace) containedWorkspaces.get(0);
-    assertEquals(1, containedWorkspace.getContainedResources().size());
-    AbstractHostable nestedResource = containedWorkspace.getContainedResources().iterator().next();
-    assertEquals(HMAS_PLATFORM, nestedResource.getTypeAsIRI());
-    assertFalse(nestedResource.getIRI().isPresent());
-
-    HypermediaMASPlatform nestedPlatform = (HypermediaMASPlatform) nestedResource;
-    assertEquals(1, nestedPlatform.getHostedResources().size());
-    AbstractHostable hostedArtifact = nestedPlatform.getHostedResources().iterator().next();
-    assertEquals(ARTIFACT, hostedArtifact.getTypeAsIRI());
+    assertEquals(0, containedWorkspace.getContainedResources().size());
   }
 }
