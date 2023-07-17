@@ -14,7 +14,7 @@ public class WorkspaceTest {
   public void testWorkspace() {
     Workspace.Builder builder = new Workspace.Builder();
 
-    AbstractProfiledResource[] resources = {
+    AbstractHostable[] resources = {
             new Agent.Builder().build(),
             new Artifact.Builder().build()
     };
@@ -24,7 +24,7 @@ public class WorkspaceTest {
             new HypermediaMASPlatform.Builder().build()
     };
 
-    builder.addContainedResources(new HashSet<>(Arrays.asList(resources)));
+    builder.addContainedResources(new HashSet<AbstractHostable>(Arrays.asList(resources)));
     builder.addContainedResource(new Agent.Builder().build());
     builder.addHMASPlatforms(new HashSet<>(Arrays.asList(platforms)));
     builder.addHMASPlatform(new HypermediaMASPlatform.Builder().build());

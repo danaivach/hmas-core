@@ -3,7 +3,7 @@ package ch.unisg.ics.interactions.hmas.core.hostables;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
-public class Artifact extends AbstractProfiledResource {
+public class Artifact extends AbstractHostable implements ProfiledResource {
 
   protected Artifact(AbstractBuilder builder) {
     super(CORE.TERM.ARTIFACT, builder);
@@ -22,7 +22,7 @@ public class Artifact extends AbstractProfiledResource {
   }
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Artifact>
-          extends AbstractProfiledResource.AbstractBuilder<S, T> {
+          extends AbstractHostable.AbstractBuilder<S, T> {
     public abstract T build();
   }
 }

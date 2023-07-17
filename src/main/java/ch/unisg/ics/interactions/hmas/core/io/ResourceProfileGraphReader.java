@@ -78,7 +78,7 @@ public class ResourceProfileGraphReader {
     }
   }
 
-  protected AbstractHostable readResource(Resource node) {
+  protected AbstractResource readResource(Resource node) {
 
     Set<IRI> types = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
 
@@ -97,19 +97,19 @@ public class ResourceProfileGraphReader {
 
   protected Agent readAgent(Resource node) {
     Agent.Builder builder = new Agent.Builder();
-    return (Agent) readProfiledResource(builder, node);
+    return (Agent) readHostable(builder, node);
   }
 
   protected Artifact readArtifact(Resource node) {
     Artifact.Builder builder = new Artifact.Builder();
-    return (Artifact) readProfiledResource(builder, node);
+    return (Artifact) readHostable(builder, node);
   }
 
   private Workspace readWorkspace(Resource node) {
     Workspace.Builder builder = new Workspace.Builder();
     Set<Resource> containedNodes = Models.objectResources(model.filter(node, CONTAINS, null));
     for (Resource hostedNode : containedNodes) {
-      builder.addContainedResource(readResource(hostedNode));
+      builder.addContainedResource((AbstractHostable) readResource(hostedNode));
     }
     return (Workspace) readArtifact(builder, node);
   }
@@ -118,26 +118,28 @@ public class ResourceProfileGraphReader {
     HypermediaMASPlatform.Builder builder = new HypermediaMASPlatform.Builder();
     Set<Resource> hostedNodes = Models.objectResources(model.filter(node, HOSTS, null));
     for (Resource hostedNode : hostedNodes) {
-      builder.addHostedResource(readResource(hostedNode));
+      builder.addHostedResource((AbstractHostable) readResource(hostedNode));
     }
-    return (HypermediaMASPlatform) readArtifact(builder, node);
+    return (HypermediaMASPlatform) readResource(builder, node);
   }
 
   private Artifact readArtifact(Artifact.AbstractBuilder<?, ?> builder, Resource node) {
-    return (Artifact) readProfiledResource(builder, node);
-  }
-
-  protected AbstractProfiledResource readProfiledResource(AbstractProfiledResource.AbstractBuilder<?, ?> builder, Resource node) {
-    return (AbstractProfiledResource) readHostable(builder, node);
+    return (Artifact) readHostable(builder, node);
   }
 
   protected AbstractHostable readHostable(AbstractHostable.AbstractBuilder<?, ?> builder, Resource node) {
-    if (node.isIRI()) {
-      builder.setIRI(SimpleValueFactory.getInstance().createIRI(node.stringValue()));
-    }
+
     Set<Resource> platformNodes = Models.objectResources(model.filter(node, IS_HOSTED_ON, null));
     for (Resource platformNode : platformNodes) {
       builder.addHMASPlatform(readHMASPlatform(platformNode));
+    }
+
+    return (AbstractHostable) readResource(builder, node);
+  }
+
+  protected AbstractResource readResource(AbstractResource.AbstractBuilder<?, ?> builder, Resource node) {
+    if (node.isIRI()) {
+      builder.setIRI(SimpleValueFactory.getInstance().createIRI(node.stringValue()));
     }
 
     Set<IRI> semanticTypes = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
@@ -150,10 +152,10 @@ public class ResourceProfileGraphReader {
     return builder.build();
   }
 
-  protected AbstractProfiledResource readOwnerResource() {
+  protected ProfiledResource readOwnerResource() {
     Optional<Resource> node = Models.objectResource(model.filter(profileIRI, IS_PROFILE_OF, null));
     if (node.isPresent()) {
-      return (AbstractProfiledResource) readResource(node.get());
+      return (ProfiledResource) readResource(node.get());
     }
     throw new InvalidResourceProfileException("A resource profile must describe a resource.");
   }
