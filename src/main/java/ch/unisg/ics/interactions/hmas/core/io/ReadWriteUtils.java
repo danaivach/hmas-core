@@ -38,7 +38,10 @@ final class ReadWriteUtils {
 
     try {
       Rio.write(model, out, format,
-              new WriterConfig().set(BasicWriterSettings.INLINE_BLANK_NODES, true));
+              new WriterConfig()
+                  .set(BasicWriterSettings.INLINE_BLANK_NODES, true)
+                  .set(BasicWriterSettings.XSD_STRING_TO_PLAIN_LITERAL, true)
+      );
     } finally {
       try {
         out.close();

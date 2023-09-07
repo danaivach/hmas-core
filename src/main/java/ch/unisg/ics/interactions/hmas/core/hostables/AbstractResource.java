@@ -53,7 +53,7 @@ public abstract class AbstractResource {
 
     public final HMAS TYPE;
     protected final Set<String> semanticTypes;
-    private Optional<String> IRI;
+    protected Optional<String> IRI;
 
     protected AbstractBuilder(HMAS type) {
       this.TYPE = type;
