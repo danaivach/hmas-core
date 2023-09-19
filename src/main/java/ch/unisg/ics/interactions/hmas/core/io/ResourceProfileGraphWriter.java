@@ -9,6 +9,7 @@ import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
@@ -28,8 +29,8 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
   }
 
   @Override
-  public String write(RDFFormat format) {
-    return ReadWriteUtils.writeToString(format, getModel());
+  public String write(RDFFormat format, Optional<String> baseURI) {
+    return ReadWriteUtils.writeToString(format, getModel(), baseURI);
   }
 
   @Override
@@ -40,7 +41,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
             .addSemanticTypes()
             .addOwnerResource()
             .addHomeHMASPlatforms()
-            .write(RDFFormat.TURTLE);
+            .write(RDFFormat.TURTLE, profile.getIRIAsString());
   }
 
   private Model getModel() {
