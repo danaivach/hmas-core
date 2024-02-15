@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
 
-public class ResourceProfileGraphWriter<T extends ResourceProfile> implements GraphWriter {
+public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> implements GraphWriter {
 
   protected final Resource profileIRI;
   protected final T profile;
@@ -21,7 +21,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
   protected final ValueFactory rdf = SimpleValueFactory.getInstance();
 
 
-  public ResourceProfileGraphWriter(final T profile) {
+  public BaseResourceProfileGraphWriter(final T profile) {
     this.profileIRI = resolveHostableLocation(profile);
     this.profile = profile;
     this.graphBuilder = new ModelBuilder();
@@ -48,17 +48,17 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
   }
 
   @Override
-  public ResourceProfileGraphWriter setNamespace(String prefix, String namespace) {
+  public BaseResourceProfileGraphWriter setNamespace(String prefix, String namespace) {
     this.graphBuilder.setNamespace(prefix, namespace);
     return this;
   }
 
-  private ResourceProfileGraphWriter addProfileIRI() {
+  private BaseResourceProfileGraphWriter addProfileIRI() {
     this.graphBuilder.add(profileIRI, RDF.TYPE, profile.getTypeAsIRI());
     return this;
   }
 
-  public ResourceProfileGraphWriter addSemanticTypes() {
+  public BaseResourceProfileGraphWriter addSemanticTypes() {
     Set<String> semanticTypes = this.profile.getSemanticTypes();
     for (String type : semanticTypes) {
       this.graphBuilder.add(profileIRI, RDF.TYPE, rdf.createIRI(type));
@@ -66,15 +66,15 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     return this;
   }
 
-  private ResourceProfileGraphWriter addOwnerResource() {
-    AbstractResource resource = profile.getResource();
-    Resource node = resolveHostableLocation(resource);
+  private BaseResourceProfileGraphWriter addOwnerResource() {
+    ProfiledResource resource = profile.getResource();
+    Resource node = resolveHostableLocation((AbstractResource) resource);
     this.graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
     writeResource(resource, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter<T> addHomeHMASPlatforms() {
+  private BaseResourceProfileGraphWriter<T> addHomeHMASPlatforms() {
     Set<HypermediaMASPlatform> platforms = profile.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
       Resource node = resolveHostableLocation(platform);
@@ -84,7 +84,7 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     return this;
   }
 
-  private ResourceProfileGraphWriter writeResource(AbstractResource resource, Resource node) {
+  private BaseResourceProfileGraphWriter writeResource(ProfiledResource resource, Resource node) {
 
     if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
@@ -100,39 +100,39 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
     return this;
   }
 
-  private ResourceProfileGraphWriter addAgent(Agent agent, Resource node) {
+  private BaseResourceProfileGraphWriter addAgent(Agent agent, Resource node) {
     addHostable(agent, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter addArtifact(Artifact artifact, Resource node) {
+  private BaseResourceProfileGraphWriter addArtifact(Artifact artifact, Resource node) {
     addHostable(artifact, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter addWorkspace(Workspace workspace, Resource node) {
+  private BaseResourceProfileGraphWriter addWorkspace(Workspace workspace, Resource node) {
     Set<AbstractHostable> contained = workspace.getContainedResources();
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
       graphBuilder.add(node, CONTAINS, containedNode);
-      writeResource(containedResource, containedNode);
+      writeResource((ProfiledResource) containedResource, containedNode);
     }
     addHostable(workspace, node);
     return this;
   }
 
-  private ResourceProfileGraphWriter addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
+  private BaseResourceProfileGraphWriter addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
     Set<AbstractHostable> hosted = platform.getHostedResources();
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
       graphBuilder.add(node, HOSTS, hostedNode);
-      writeResource(hostedResource, hostedNode);
+      writeResource((ProfiledResource) hostedResource, hostedNode);
     }
     addResource(platform, node);
     return this;
   }
 
-  protected ResourceProfileGraphWriter addHostable(AbstractHostable resource, Resource node) {
+  protected BaseResourceProfileGraphWriter addHostable(AbstractHostable resource, Resource node) {
     graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
 
     Set<HypermediaMASPlatform> platforms = resource.getHMASPlatforms();
@@ -147,11 +147,11 @@ public class ResourceProfileGraphWriter<T extends ResourceProfile> implements Gr
       graphBuilder.add(node, RDF.TYPE, rdf.createIRI(type));
     }
 
-    addResource(resource, node);
+    addResource((ProfiledResource) resource, node);
     return this;
   }
 
-  protected ResourceProfileGraphWriter addResource(AbstractResource resource, Resource node) {
+  protected BaseResourceProfileGraphWriter addResource(ProfiledResource resource, Resource node) {
     graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
 
     Set<String> semanticTypes = resource.getSemanticTypes();

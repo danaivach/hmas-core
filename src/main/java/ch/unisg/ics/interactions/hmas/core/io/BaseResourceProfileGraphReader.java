@@ -24,13 +24,13 @@ import java.util.Set;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
 
-public class ResourceProfileGraphReader {
+public class BaseResourceProfileGraphReader {
 
   protected final Resource profileIRI;
   private final ValueFactory rdf = SimpleValueFactory.getInstance();
   protected Model model;
 
-  protected ResourceProfileGraphReader(RDFFormat format, String representation) {
+  protected BaseResourceProfileGraphReader(RDFFormat format, String representation) {
 
     loadModel(format, representation);
 
@@ -43,17 +43,17 @@ public class ResourceProfileGraphReader {
     }
   }
 
-  public static ResourceProfile readFromFile(String path) throws IOException {
+  public static BaseResourceProfile readFromFile(String path) throws IOException {
     String content = new String(Files.readAllBytes(Paths.get(path)));
     return readFromString(content);
   }
 
   /* Currently, the only supported format is Turtle */
-  public static ResourceProfile readFromString(String representation) {
-    ResourceProfileGraphReader reader = new ResourceProfileGraphReader(RDFFormat.TURTLE, representation);
+  public static BaseResourceProfile readFromString(String representation) {
+    BaseResourceProfileGraphReader reader = new BaseResourceProfileGraphReader(RDFFormat.TURTLE, representation);
 
-    ResourceProfile.Builder profileBuilder =
-            new ResourceProfile.Builder(reader.readOwnerResource())
+    BaseResourceProfile.Builder profileBuilder =
+            new BaseResourceProfile.Builder(reader.readOwnerResource())
                     .addHMASPlatforms(reader.readHomeHMASPlatforms())
                     .addSemanticTypes(reader.readSemanticTypes());
 

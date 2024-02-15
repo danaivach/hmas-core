@@ -16,7 +16,7 @@ public class ResourceProfileTest {
 
     Agent agent = new Agent.Builder().build();
 
-    ResourceProfile.Builder builder = new ResourceProfile.Builder(agent);
+    BaseResourceProfile.Builder builder = new BaseResourceProfile.Builder(agent);
 
     BaseSignifier[] signifiers = {
             new BaseSignifier.Builder().build(),
@@ -31,7 +31,7 @@ public class ResourceProfileTest {
     builder.addHMASPlatforms(new HashSet<>(Arrays.asList(platforms)));
     builder.addHMASPlatform(new HypermediaMASPlatform.Builder().build());
 
-    ResourceProfile resourceProfile = builder.build();
+    BaseResourceProfile resourceProfile = builder.build();
     assertEquals(CORE.TERM.RESOURCE_PROFILE, resourceProfile.getType());
     assertEquals(CORE.NAMESPACE + "ResourceProfile", resourceProfile.getTypeAsString());
     assertEquals(CORE.RESOURCE_PROFILE, resourceProfile.getTypeAsIRI());
@@ -49,7 +49,7 @@ public class ResourceProfileTest {
 
     Agent agent = new Agent.Builder().build();
 
-    ResourceProfile resourceProfile = new ResourceProfile.Builder(agent)
+    BaseResourceProfile resourceProfile = new BaseResourceProfile.Builder(agent)
             .build();
 
     assertEquals(CORE.TERM.RESOURCE_PROFILE, resourceProfile.getType());

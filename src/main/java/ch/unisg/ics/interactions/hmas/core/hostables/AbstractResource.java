@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractResource {
+public abstract class AbstractResource implements Resource {
 
   private final Optional<String> IRI;
   private final HMAS type;
@@ -30,7 +30,7 @@ public abstract class AbstractResource {
     return this.type.toString();
   }
 
-  public org.eclipse.rdf4j.model.IRI getTypeAsIRI() {
+  public IRI getTypeAsIRI() {
     return this.type.toIRI();
   }
 
@@ -66,7 +66,7 @@ public abstract class AbstractResource {
         SimpleValueFactory.getInstance().createIRI(IRI);
         return true;
       } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("The IRI of a Hostable must be valid.");
+        throw new IllegalArgumentException("The IRI of a Hostable must be valid");
       }
     }
 

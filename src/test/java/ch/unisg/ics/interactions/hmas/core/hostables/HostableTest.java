@@ -44,7 +44,7 @@ public class HostableTest {
       builder.setIRIAsString("invalid-iri");
     });
 
-    String expectedMessage = "The IRI of a Hostable must be valid.";
+    String expectedMessage = "The IRI of a Hostable must be valid";
     assertTrue(ex.getMessage().contains(expectedMessage));
   }
 

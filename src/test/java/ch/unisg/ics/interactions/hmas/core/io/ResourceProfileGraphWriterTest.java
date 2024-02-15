@@ -43,8 +43,8 @@ public class ResourceProfileGraphWriterTest {
             " hmas:isProfileOf <urn:agent> .\n" +
             "<urn:agent> a hmas:Agent .";
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(new Agent.Builder()
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(new Agent.Builder()
                     .setIRIAsString("urn:agent").build())
                     .setIRIAsString("urn:profile")
                     .build();
@@ -59,8 +59,8 @@ public class ResourceProfileGraphWriterTest {
             "<urn:profile> a hmas:ResourceProfile ;\n" +
             " hmas:isProfileOf [ a hmas:Agent ] .";
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(new Agent.Builder().build())
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(new Agent.Builder().build())
                     .setIRIAsString("urn:profile")
                     .build();
 
@@ -74,8 +74,8 @@ public class ResourceProfileGraphWriterTest {
             "<urn:profile> a hmas:ResourceProfile ;\n" +
             " hmas:isProfileOf [ a hmas:Artifact ] .";
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(new Artifact.Builder().build())
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(new Artifact.Builder().build())
                     .setIRIAsString("urn:profile")
                     .build();
 
@@ -92,8 +92,8 @@ public class ResourceProfileGraphWriterTest {
             "<urn:platform> a hmas:HypermediaMASPlatform ;\n" +
             " hmas:hosts [ a hmas:Agent ] .\n";
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(
                     new HypermediaMASPlatform.Builder().setIRIAsString("urn:platform")
                             .addHostedResource(new Agent.Builder().build())
                             .build())
@@ -120,8 +120,8 @@ public class ResourceProfileGraphWriterTest {
                     .setIRIAsString("urn:super-platform")
                     .build();
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(
                     new HypermediaMASPlatform.Builder().setIRIAsString("urn:platform")
                             .addHostedResource(new Agent.Builder().build()).build())
                     .addHMASPlatform(superPlatform)
@@ -140,8 +140,8 @@ public class ResourceProfileGraphWriterTest {
             "<urn:workspace> a hmas:Workspace ;\n" +
             " hmas:contains [ a hmas:Agent ].";
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(new Workspace.Builder()
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(new Workspace.Builder()
                     .setIRIAsString("urn:workspace")
                     .addContainedResource(new Agent.Builder().build()).build())
                     .setIRIAsString("urn:profile")
@@ -159,8 +159,8 @@ public class ResourceProfileGraphWriterTest {
             "<urn:artifact> a hmas:Artifact, <https://www.w3.org/2019/wot/td#Thing>,  " +
             " <https://saref.etsi.org/core/Actuator>.";
 
-    ResourceProfile profile =
-            new ResourceProfile.Builder(new Artifact.Builder()
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(new Artifact.Builder()
                     .setIRIAsString("urn:artifact")
                     .addSemanticType("https://www.w3.org/2019/wot/td#Thing")
                     .addSemanticType("https://saref.etsi.org/core/Actuator")
@@ -172,12 +172,12 @@ public class ResourceProfileGraphWriterTest {
     assertIsomorphicGraphs(expectedProfile, profile);
   }
 
-  private void assertIsomorphicGraphs(String expectedProfile, ResourceProfile profile) throws RDFParseException,
+  private void assertIsomorphicGraphs(String expectedProfile, BaseResourceProfile profile) throws RDFParseException,
           RDFHandlerException, IOException {
 
     Model expectedModel = readModelFromString(expectedProfile, BASE_URI);
 
-    String actualProfile = new ResourceProfileGraphWriter(profile)
+    String actualProfile = new BaseResourceProfileGraphWriter(profile)
             .setNamespace("hmas", CORE.NAMESPACE)
             .write();
 

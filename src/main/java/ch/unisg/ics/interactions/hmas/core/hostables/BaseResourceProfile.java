@@ -2,30 +2,30 @@ package ch.unisg.ics.interactions.hmas.core.hostables;
 
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 
-public class ResourceProfile extends AbstractHostable {
+public class BaseResourceProfile extends AbstractHostable {
   private final ProfiledResource resource;
 
-  protected ResourceProfile(AbstractBuilder builder) {
+  protected BaseResourceProfile(AbstractBuilder builder) {
     super(CORE.TERM.RESOURCE_PROFILE, builder);
     this.resource = builder.resource;
   }
 
-  public AbstractResource getResource() {
-    return (AbstractResource) this.resource;
+  public ProfiledResource getResource() {
+    return this.resource;
   }
 
-  public static class Builder extends AbstractBuilder<Builder, ResourceProfile> {
+  public static class Builder extends AbstractBuilder<Builder, BaseResourceProfile> {
 
     public Builder(ProfiledResource resource) {
       super(resource);
     }
 
-    public ResourceProfile build() {
-      return new ResourceProfile(this);
+    public BaseResourceProfile build() {
+      return new BaseResourceProfile(this);
     }
   }
 
-  public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends ResourceProfile>
+  public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends BaseResourceProfile>
           extends AbstractHostable.AbstractBuilder<S, T> {
 
     private final ProfiledResource resource;

@@ -17,7 +17,7 @@ public class HypermediaMASPlatformTest {
     AbstractHostable[] hostables = {
             new Agent.Builder().build(),
             new Artifact.Builder().build(),
-            new ResourceProfile.Builder(new Agent.Builder().build()).build(),
+            new BaseResourceProfile.Builder(new Agent.Builder().build()).build(),
             new BaseSignifier.Builder().build()
     };
 
