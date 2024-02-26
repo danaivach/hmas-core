@@ -78,6 +78,10 @@ public class BaseResourceProfileGraphReader {
     }
   }
 
+  public Model getModel() {
+    return this.model;
+  }
+
   protected AbstractResource readResource(Resource node) {
 
     Set<IRI> types = Models.objectIRIs(model.filter(node, RDF.TYPE, null));
