@@ -61,7 +61,7 @@ public abstract class AbstractResource implements Resource {
       this.semanticTypes = new HashSet<>();
     }
 
-    private static boolean validateIRI(String IRI) {
+    protected static boolean validateIRI(String IRI) {
       try {
         SimpleValueFactory.getInstance().createIRI(IRI);
         return true;

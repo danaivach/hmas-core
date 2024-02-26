@@ -3,7 +3,6 @@ package ch.unisg.ics.interactions.hmas.core.hostables;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 import com.google.common.collect.ImmutableSet;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -51,15 +50,6 @@ public abstract class AbstractHostable extends AbstractResource {
     protected AbstractBuilder(HMAS type) {
       super(type);
       this.platforms = new HashSet<>();
-    }
-
-    private static boolean validateIRI(String IRI) {
-      try {
-        SimpleValueFactory.getInstance().createIRI(IRI);
-        return true;
-      } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("The IRI of a Hostable must be valid.");
-      }
     }
 
     @SuppressWarnings("unchecked")
