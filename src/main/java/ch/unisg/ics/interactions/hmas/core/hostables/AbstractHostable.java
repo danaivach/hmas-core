@@ -19,14 +19,9 @@ public abstract class AbstractHostable extends AbstractResource {
    */
   private final transient Set<HypermediaMASPlatform> platforms;
 
-  /**
-   * Construct a hostable resource.
-   *
-   * @param builder the builder of hostables
-   * @return the hostable resource
-   */
   protected AbstractHostable(final HMAS type, final AbstractBuilder builder) {
     super(type, builder);
+    //noinspection unchecked
     this.platforms = ImmutableSet.copyOf(builder.platforms);
   }
 
@@ -52,19 +47,16 @@ public abstract class AbstractHostable extends AbstractResource {
       this.platforms = new HashSet<>();
     }
 
-    @SuppressWarnings("unchecked")
     public S addHMASPlatform(final HypermediaMASPlatform platform) {
       this.platforms.add(platform);
-      return (S) this;
+      return getBuilder();
     }
 
-    @SuppressWarnings("unchecked")
     public S addHMASPlatforms(final Set<HypermediaMASPlatform> platforms) {
       this.platforms.addAll(platforms);
-      return (S) this;
+      return getBuilder();
     }
 
-    @SuppressWarnings("unchecked")
     public abstract T build();
   }
 }

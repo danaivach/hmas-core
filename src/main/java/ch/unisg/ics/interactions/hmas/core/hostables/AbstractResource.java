@@ -15,6 +15,7 @@ public abstract class AbstractResource implements Resource {
   private final HMAS type;
   private final Set<String> semanticTypes;
 
+  @SuppressWarnings("unchecked")
   protected AbstractResource(final HMAS type, final AbstractBuilder builder) {
 
     this.type = type;
@@ -39,10 +40,7 @@ public abstract class AbstractResource implements Resource {
   }
 
   public Optional<IRI> getIRI() {
-    if (this.IRI.isPresent()) {
-      return Optional.of(SimpleValueFactory.getInstance().createIRI(this.IRI.get()));
-    }
-    return Optional.empty();
+    return this.IRI.map(s -> SimpleValueFactory.getInstance().createIRI(s));
   }
 
   public Optional<String> getIRIAsString() {
@@ -61,6 +59,8 @@ public abstract class AbstractResource implements Resource {
       this.semanticTypes = new HashSet<>();
     }
 
+    abstract protected S getBuilder();
+
     protected static boolean validateIRI(String IRI) {
       try {
         SimpleValueFactory.getInstance().createIRI(IRI);
@@ -70,30 +70,27 @@ public abstract class AbstractResource implements Resource {
       }
     }
 
-    @SuppressWarnings("unchecked")
     public S setIRI(final IRI IRI) {
       this.IRI = Optional.of(IRI.toString());
-      return (S) this;
+      return getBuilder();
     }
 
-    @SuppressWarnings("unchecked")
     public S setIRIAsString(final String IRI) {
       validateIRI(IRI);
       this.IRI = Optional.of(IRI);
-      return (S) this;
+      return getBuilder();
     }
 
     public S addSemanticType(final String type) {
       this.semanticTypes.add(type);
-      return (S) this;
+      return getBuilder();
     }
 
     public S addSemanticTypes(final Set<String> types) {
       this.semanticTypes.addAll(types);
-      return (S) this;
+      return getBuilder();
     }
 
-    @SuppressWarnings("unchecked")
     public abstract T build();
   }
 }
