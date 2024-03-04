@@ -67,8 +67,8 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
   }
 
   private BaseResourceProfileGraphWriter addOwnerResource() {
-    ProfiledResource resource = profile.getResource();
-    Resource node = resolveHostableLocation((AbstractResource) resource);
+    AbstractResource resource = (AbstractResource) profile.getResource();
+    Resource node = resolveHostableLocation(resource);
     this.graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
     writeResource(resource, node);
     return this;
@@ -84,7 +84,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter writeResource(ProfiledResource resource, Resource node) {
+  private BaseResourceProfileGraphWriter writeResource(AbstractResource resource, Resource node) {
 
     if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
@@ -115,7 +115,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
       graphBuilder.add(node, CONTAINS, containedNode);
-      writeResource((ProfiledResource) containedResource, containedNode);
+      writeResource(containedResource, containedNode);
     }
     addHostable(workspace, node);
     return this;
@@ -126,7 +126,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
       graphBuilder.add(node, HOSTS, hostedNode);
-      writeResource((ProfiledResource) hostedResource, hostedNode);
+      writeResource(hostedResource, hostedNode);
     }
     addResource(platform, node);
     return this;
@@ -147,11 +147,11 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
       graphBuilder.add(node, RDF.TYPE, rdf.createIRI(type));
     }
 
-    addResource((ProfiledResource) resource, node);
+    addResource(resource, node);
     return this;
   }
 
-  protected BaseResourceProfileGraphWriter addResource(ProfiledResource resource, Resource node) {
+  protected BaseResourceProfileGraphWriter addResource(AbstractResource resource, Resource node) {
     graphBuilder.add(node, RDF.TYPE, resource.getTypeAsIRI());
 
     Set<String> semanticTypes = resource.getSemanticTypes();

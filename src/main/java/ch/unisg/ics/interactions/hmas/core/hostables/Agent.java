@@ -12,6 +12,11 @@ public class Agent extends AbstractHostable implements ProfiledResource {
   public static class Builder extends AbstractBuilder<Builder, Agent> {
     public static final HMAS TYPE = CORE.TERM.AGENT;
 
+    @Override
+    protected Builder getBuilder() {
+      return this;
+    }
+
     public Agent build() {
       return new Agent(this);
     }

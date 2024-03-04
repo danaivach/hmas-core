@@ -21,6 +21,11 @@ public class Workspace extends Artifact {
 
   public static class Builder extends AbstractBuilder<Builder, Workspace> {
 
+    @Override
+    protected Builder getBuilder() {
+      return this;
+    }
+
     public Workspace build() {
       return new Workspace(this);
     }
@@ -37,12 +42,12 @@ public class Workspace extends Artifact {
 
     public S addContainedResource(AbstractHostable hostable) {
       this.containedResources.add(hostable);
-      return (S) this;
+      return getBuilder();
     }
 
     public S addContainedResources(Set<AbstractHostable> hostables) {
       this.containedResources.addAll(hostables);
-      return (S) this;
+      return getBuilder();
     }
 
     public abstract T build();

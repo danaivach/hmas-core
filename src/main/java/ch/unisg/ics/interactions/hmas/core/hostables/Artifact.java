@@ -16,6 +16,11 @@ public class Artifact extends AbstractHostable implements ProfiledResource {
   public static class Builder extends AbstractBuilder<Builder, Artifact> {
     public static final HMAS TYPE = CORE.TERM.ARTIFACT;
 
+    @Override
+    protected Builder getBuilder() {
+      return this;
+    }
+
     public Artifact build() {
       return new Artifact(this);
     }

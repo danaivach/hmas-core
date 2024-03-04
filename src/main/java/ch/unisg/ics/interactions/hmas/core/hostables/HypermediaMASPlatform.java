@@ -16,6 +16,7 @@ public class HypermediaMASPlatform extends AbstractResource implements ProfiledR
     this(CORE.TERM.HMAS_PLATFORM, builder);
   }
 
+  @SuppressWarnings("unchecked")
   protected HypermediaMASPlatform(HMAS type, AbstractBuilder builder) {
     super(type, builder);
     this.hostedResources = ImmutableSet.copyOf(builder.hostedResources);
@@ -26,6 +27,11 @@ public class HypermediaMASPlatform extends AbstractResource implements ProfiledR
   }
 
   public static class Builder extends AbstractBuilder<Builder, HypermediaMASPlatform> {
+
+    @Override
+    protected Builder getBuilder() {
+      return this;
+    }
 
     public HypermediaMASPlatform build() {
       return new HypermediaMASPlatform(this);
@@ -48,12 +54,12 @@ public class HypermediaMASPlatform extends AbstractResource implements ProfiledR
 
     public S addHostedResource(final AbstractHostable hostable) {
       this.hostedResources.add(hostable);
-      return (S) this;
+      return getBuilder();
     }
 
     public S addHostedResources(final Set<AbstractHostable> hostables) {
       this.hostedResources.addAll(hostables);
-      return (S) this;
+      return getBuilder();
     }
 
     public abstract T build();

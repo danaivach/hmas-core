@@ -3,7 +3,6 @@ package ch.unisg.ics.interactions.hmas.core.hostables;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 import com.google.common.collect.ImmutableSet;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,14 +19,9 @@ public abstract class AbstractHostable extends AbstractResource {
    */
   private final transient Set<HypermediaMASPlatform> platforms;
 
-  /**
-   * Construct a hostable resource.
-   *
-   * @param builder the builder of hostables
-   * @return the hostable resource
-   */
   protected AbstractHostable(final HMAS type, final AbstractBuilder builder) {
     super(type, builder);
+    //noinspection unchecked
     this.platforms = ImmutableSet.copyOf(builder.platforms);
   }
 
@@ -53,28 +47,16 @@ public abstract class AbstractHostable extends AbstractResource {
       this.platforms = new HashSet<>();
     }
 
-    private static boolean validateIRI(String IRI) {
-      try {
-        SimpleValueFactory.getInstance().createIRI(IRI);
-        return true;
-      } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("The IRI of a Hostable must be valid.");
-      }
-    }
-
-    @SuppressWarnings("unchecked")
     public S addHMASPlatform(final HypermediaMASPlatform platform) {
       this.platforms.add(platform);
-      return (S) this;
+      return getBuilder();
     }
 
-    @SuppressWarnings("unchecked")
     public S addHMASPlatforms(final Set<HypermediaMASPlatform> platforms) {
       this.platforms.addAll(platforms);
-      return (S) this;
+      return getBuilder();
     }
 
-    @SuppressWarnings("unchecked")
     public abstract T build();
   }
 }
