@@ -177,6 +177,7 @@ public class ResourceProfileGraphWriterTest {
 
     Model expectedModel = readModelFromString(expectedProfile, BASE_URI);
 
+    //noinspection unchecked
     String actualProfile = new BaseResourceProfileGraphWriter(profile)
             .setNamespace("hmas", CORE.NAMESPACE)
             .write();

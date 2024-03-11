@@ -12,6 +12,7 @@ public class Workspace extends Artifact {
 
   protected Workspace(AbstractBuilder builder) {
     super(CORE.TERM.WORKSPACE, builder);
+    //noinspection unchecked
     this.containedResources = ImmutableSet.copyOf(builder.containedResources);
   }
 

@@ -38,6 +38,7 @@ public class ResourceProfileGraphReaderTest {
 
     assertEquals(CORE.RESOURCE_PROFILE, profile.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
+    assertTrue(profile.getIRIAsString().isPresent());
     assertEquals("urn:profile", profile.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:profile"), profile.getIRI().get());
   }
@@ -116,6 +117,7 @@ public class ResourceProfileGraphReaderTest {
     ProfiledResource agent = profile.getResource();
     assertEquals(AGENT, agent.getTypeAsIRI());
     assertTrue(agent.getIRI().isPresent());
+    assertTrue(agent.getIRIAsString().isPresent());
     assertEquals("urn:agent", agent.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:agent"), agent.getIRI().get());
   }
@@ -134,6 +136,7 @@ public class ResourceProfileGraphReaderTest {
     ProfiledResource agent = profile.getResource();
     assertEquals(AGENT, agent.getTypeAsIRI());
     assertTrue(agent.getIRI().isPresent());
+    assertTrue(agent.getIRIAsString().isPresent());
     assertEquals("urn:agent", agent.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:agent"), agent.getIRI().get());
   }
@@ -213,6 +216,8 @@ public class ResourceProfileGraphReaderTest {
     HypermediaMASPlatform ownerResource = (HypermediaMASPlatform) profile.getResource();
     assertEquals(CORE.HMAS_PLATFORM, ownerResource.getTypeAsIRI());
     assertTrue(profile.getIRI().isPresent());
+    assertTrue(ownerResource.getIRIAsString().isPresent());
+    assertTrue(ownerResource.getIRI().isPresent());
     assertEquals("urn:platform", ownerResource.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:platform"), ownerResource.getIRI().get());
 
