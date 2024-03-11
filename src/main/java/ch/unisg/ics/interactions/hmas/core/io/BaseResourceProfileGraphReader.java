@@ -1,10 +1,8 @@
 package ch.unisg.ics.interactions.hmas.core.io;
 
 import ch.unisg.ics.interactions.hmas.core.hostables.*;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
@@ -55,7 +53,8 @@ public class BaseResourceProfileGraphReader {
     BaseResourceProfile.Builder profileBuilder =
             new BaseResourceProfile.Builder(reader.readOwnerResource())
                     .addHMASPlatforms(reader.readHomeHMASPlatforms())
-                    .addSemanticTypes(reader.readSemanticTypes());
+                    .addSemanticTypes(reader.readSemanticTypes())
+                    .addGraph(reader.getModel());
 
     Optional<IRI> profileIRI = reader.readProfileIRI();
     profileIRI.ifPresent(profileBuilder::setIRI);
@@ -149,6 +148,16 @@ public class BaseResourceProfileGraphReader {
       if (!builder.TYPE.toString().equals(type.stringValue())) {
         builder.addSemanticType(type.stringValue());
       }
+    }
+
+    Model resourceModel = model.filter(node, null, null);
+
+    if (node.isBNode()) {
+      for (Statement statement : resourceModel) {
+        builder.addTriple(statement.getPredicate(), statement.getObject());
+      }
+    } else {
+      builder.addGraph(resourceModel);
     }
 
     return builder.build();

@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.eclipse.rdf4j.model.util.Values.iri;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ArtifactTest {
   @Test
@@ -32,6 +32,9 @@ public class ArtifactTest {
     assertThrows(UnsupportedOperationException.class, () -> {
       artifact.getHMASPlatforms().add(null);
     });
+
+    assertFalse(artifact.getGraph().isPresent());
+    assertFalse(artifact.getResolvedGraph(iri("urn:artifact")).isPresent());
   }
 
   @Test

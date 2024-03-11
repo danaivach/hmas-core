@@ -2,7 +2,9 @@ package ch.unisg.ics.interactions.hmas.core.io;
 
 import ch.unisg.ics.interactions.hmas.core.hostables.*;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.AGENT;
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.WORKSPACE;
+import static org.eclipse.rdf4j.model.util.Values.iri;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceProfileGraphReaderTest {
@@ -41,6 +44,42 @@ public class ResourceProfileGraphReaderTest {
     assertTrue(profile.getIRIAsString().isPresent());
     assertEquals("urn:profile", profile.getIRIAsString().get());
     assertEquals(SimpleValueFactory.getInstance().createIRI("urn:profile"), profile.getIRI().get());
+  }
+
+  @Test
+  public void testReadResourceProfileWithAdditionalTriples() {
+    String expectedProfile = PREFIXES +
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isHostedOn <http://yggdrasil.interactions.ics.unisg.ch/#platform> ;" +
+            " hmas:isProfileOf [ a hmas:Artifact, <https://www.w3.org/2019/wot/td#Thing> ;\n" +
+            "                     hmas:isContainedIn <http://example.org/myWorkspace> ] .\n" +
+            "\n" +
+            "<http://example.org/myWorkspace> a <http://example.org/cartago/Workspace> .";
+
+    BaseResourceProfile profile =
+            BaseResourceProfileGraphReader.readFromString(expectedProfile);
+
+    assertEquals(CORE.RESOURCE_PROFILE, profile.getTypeAsIRI());
+    assertTrue(profile.getIRI().isPresent());
+    assertTrue(profile.getIRIAsString().isPresent());
+    assertEquals("urn:profile", profile.getIRIAsString().get());
+    assertEquals(SimpleValueFactory.getInstance().createIRI("urn:profile"), profile.getIRI().get());
+
+    Artifact artifact = (Artifact) profile.getResource();
+
+    assertTrue(profile.getGraph().isPresent());
+    assertEquals(7, profile.getGraph().get().size());
+
+    assertFalse(artifact.getGraph().isPresent());
+    assertTrue(artifact.getResolvedGraph(iri("urn:artifact")).isPresent());
+    Model resolvedArtifactGraph = artifact.getResolvedGraph(iri("urn:artifact")).get();
+    assertEquals(3, resolvedArtifactGraph.size());
+    assertTrue(resolvedArtifactGraph.contains(iri("urn:artifact"), RDF.TYPE, CORE.ARTIFACT));
+    assertTrue(resolvedArtifactGraph.contains(iri("urn:artifact"), RDF.TYPE,
+            iri("https://www.w3.org/2019/wot/td#Thing")));
+    assertTrue(resolvedArtifactGraph.contains(iri("urn:artifact"), CORE.IS_CONTAINED_IN,
+            iri("http://example.org/myWorkspace")));
   }
 
   @Test

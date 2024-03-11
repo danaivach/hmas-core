@@ -9,6 +9,7 @@ import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static ch.unisg.ics.interactions.hmas.core.vocabularies.CORE.*;
@@ -40,6 +41,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
             .addSemanticTypes()
             .addOwnerResource()
             .addHomeHMASPlatforms()
+            .addGraph()
             .write(RDFFormat.TURTLE);
   }
 
@@ -157,6 +159,22 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     Set<String> semanticTypes = resource.getSemanticTypes();
     for (String type : semanticTypes) {
       graphBuilder.add(node, RDF.TYPE, rdf.createIRI(type));
+    }
+    return this.addGraph(resource, node);
+  }
+
+  private BaseResourceProfileGraphWriter addGraph() {
+    return this.addGraph(profile, profileIRI);
+  }
+
+  private BaseResourceProfileGraphWriter addGraph(AbstractResource resource, Resource node) {
+    Optional<Model> graph = resource.getResolvedGraph(node);
+    if (graph.isPresent()) {
+      getModel().addAll(graph.get());
+
+      graph.get().getNamespaces().stream()
+              .filter(ns -> !getModel().getNamespace(ns.getPrefix()).isPresent())
+              .forEach(graphBuilder::setNamespace);
     }
     return this;
   }

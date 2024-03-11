@@ -4,7 +4,9 @@ import ch.unisg.ics.interactions.hmas.core.hostables.*;
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.util.Models;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.rio.*;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Logger;
 
+import static org.eclipse.rdf4j.model.util.Values.iri;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResourceProfileGraphWriterTest {
@@ -76,6 +79,36 @@ public class ResourceProfileGraphWriterTest {
 
     BaseResourceProfile profile =
             new BaseResourceProfile.Builder(new Artifact.Builder().build())
+                    .setIRIAsString("urn:profile")
+                    .build();
+
+    assertIsomorphicGraphs(expectedProfile, profile);
+  }
+
+  @Test
+  public void testWriteResourceProfileOfArtifactAdditionalTriples() throws IOException {
+    String expectedProfile = PREFIX +
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isHostedOn <http://yggdrasil.interactions.ics.unisg.ch/#platform> ;" +
+            " hmas:isProfileOf [ a hmas:Artifact, <https://www.w3.org/2019/wot/td#Thing> ;\n" +
+            "                     hmas:isContainedIn <http://example.org/myWorkspace> ] .\n" +
+            "\n" +
+            "<http://example.org/myWorkspace> a <http://example.org/cartago/Workspace> .";
+
+    Model additionalModel = new ModelBuilder()
+            .add(iri("http://example.org/myWorkspace"), RDF.TYPE, iri("http://example.org/cartago/Workspace"))
+            .setNamespace("cartago", "http://example.org/cartago/")
+            .setNamespace("td", "https://www.w3.org/2019/wot/td#")
+            .build();
+
+    BaseResourceProfile profile =
+            new BaseResourceProfile.Builder(new Artifact.Builder()
+                    .addGraph(additionalModel)
+                    .addTriple(RDF.TYPE, iri("https://www.w3.org/2019/wot/td#Thing"))
+                    .addTriple(CORE.IS_CONTAINED_IN, iri("http://example.org/myWorkspace"))
+                    .build())
+                    .addTriple(iri("urn:profile"), CORE.IS_HOSTED_ON, iri("http://yggdrasil.interactions.ics.unisg.ch/#platform"))
                     .setIRIAsString("urn:profile")
                     .build();
 
