@@ -192,6 +192,7 @@ public class ResourceProfileGraphReaderTest {
     assertEquals(3, artifact.getSemanticTypes().size());
     assertTrue(artifact.getSemanticTypes().contains("https://www.w3.org/2019/wot/td#Thing"));
     assertTrue(artifact.getSemanticTypes().contains("https://saref.etsi.org/core/Actuator"));
+    assertTrue(artifact.getSemanticTypes().contains(CORE.TERM.ARTIFACT.toString()));
   }
 
   @Test

@@ -28,6 +28,15 @@ public class Artifact extends AbstractHostable implements ProfiledResource {
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Artifact>
           extends AbstractHostable.AbstractBuilder<S, T> {
+
+    protected AbstractBuilder() {
+      super(CORE.TERM.ARTIFACT);
+    }
+
+    protected AbstractBuilder(HMAS type) {
+      super(type);
+    }
+
     public abstract T build();
   }
 }

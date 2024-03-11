@@ -1,6 +1,7 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
 import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
+import ch.unisg.ics.interactions.hmas.core.vocabularies.HMAS;
 
 public class BaseResourceProfile extends AbstractHostable {
   private final ProfiledResource resource;
@@ -36,6 +37,11 @@ public class BaseResourceProfile extends AbstractHostable {
     private final ProfiledResource resource;
 
     public AbstractBuilder(ProfiledResource resource) {
+      this(resource, CORE.TERM.RESOURCE_PROFILE);
+    }
+
+    protected AbstractBuilder(ProfiledResource resource, HMAS type) {
+      super(type);
       this.resource = resource;
     }
 

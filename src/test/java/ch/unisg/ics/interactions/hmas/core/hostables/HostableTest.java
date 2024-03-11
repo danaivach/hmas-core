@@ -1,5 +1,6 @@
 package ch.unisg.ics.interactions.hmas.core.hostables;
 
+import ch.unisg.ics.interactions.hmas.core.vocabularies.CORE;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.junit.jupiter.api.Test;
 
@@ -84,10 +85,11 @@ public class HostableTest {
     builder.addSemanticTypes(new HashSet<>(moreTypes));
 
     Agent agent = builder.build();
-    assertEquals(5, agent.getSemanticTypes().size());
+    assertEquals(6, agent.getSemanticTypes().size());
     assertTrue(agent.getSemanticTypes().containsAll(types));
     assertTrue(agent.getSemanticTypes().contains("http:example.org/ontology/BDIAgent"));
     assertTrue(agent.getSemanticTypes().contains("http:example.org/onto/AgentType3"));
     assertTrue(agent.getSemanticTypes().contains("http:example.org/onto/AgentType4"));
+    assertTrue(agent.getSemanticTypes().contains(CORE.TERM.AGENT.toString()));
   }
 }

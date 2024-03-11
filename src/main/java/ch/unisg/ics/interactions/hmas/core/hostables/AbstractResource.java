@@ -57,6 +57,7 @@ public abstract class AbstractResource implements Resource {
       this.TYPE = type;
       this.IRI = Optional.empty();
       this.semanticTypes = new HashSet<>();
+      this.semanticTypes.add(type.toString());
     }
 
     abstract protected S getBuilder();

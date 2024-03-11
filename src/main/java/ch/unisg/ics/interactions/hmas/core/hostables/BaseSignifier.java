@@ -24,6 +24,15 @@ public class BaseSignifier extends AbstractHostable {
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends BaseSignifier>
           extends AbstractHostable.AbstractBuilder<S, T> {
+
+    protected AbstractBuilder() {
+      super(CORE.TERM.SIGNIFIER);
+    }
+
+    protected AbstractBuilder(HMAS type) {
+      super(type);
+    }
+
     public abstract T build();
   }
 }

@@ -24,6 +24,15 @@ public class Agent extends AbstractHostable implements ProfiledResource {
 
   public abstract static class AbstractBuilder<S extends AbstractBuilder, T extends Agent>
           extends AbstractHostable.AbstractBuilder<S, T> {
+
+    protected AbstractBuilder() {
+      super(CORE.TERM.AGENT);
+    }
+
+    protected AbstractBuilder(HMAS type) {
+      super(type);
+    }
+
     public abstract T build();
   }
 }
