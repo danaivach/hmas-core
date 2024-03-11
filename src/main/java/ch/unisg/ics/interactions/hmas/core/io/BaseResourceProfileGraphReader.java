@@ -58,9 +58,7 @@ public class BaseResourceProfileGraphReader {
                     .addSemanticTypes(reader.readSemanticTypes());
 
     Optional<IRI> profileIRI = reader.readProfileIRI();
-    if (profileIRI.isPresent()) {
-      profileBuilder.setIRI(profileIRI.get());
-    }
+    profileIRI.ifPresent(profileBuilder::setIRI);
 
     return profileBuilder.build();
   }
@@ -76,6 +74,10 @@ public class BaseResourceProfileGraphReader {
     } catch (IOException ex) {
       ex.printStackTrace();
     }
+  }
+
+  public Model getModel() {
+    return this.model;
   }
 
   protected AbstractResource readResource(Resource node) {

@@ -12,6 +12,11 @@ public class BaseSignifier extends AbstractHostable {
   public static class Builder extends AbstractBuilder<Builder, BaseSignifier> {
     public static final HMAS TYPE = CORE.TERM.SIGNIFIER;
 
+    @Override
+    protected Builder getBuilder() {
+      return this;
+    }
+
     public BaseSignifier build() {
       return new BaseSignifier(this);
     }

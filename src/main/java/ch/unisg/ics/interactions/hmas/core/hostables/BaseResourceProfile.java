@@ -20,6 +20,11 @@ public class BaseResourceProfile extends AbstractHostable {
       super(resource);
     }
 
+    @Override
+    protected Builder getBuilder() {
+      return this;
+    }
+
     public BaseResourceProfile build() {
       return new BaseResourceProfile(this);
     }

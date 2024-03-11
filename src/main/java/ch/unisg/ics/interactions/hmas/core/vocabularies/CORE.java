@@ -38,6 +38,8 @@ public class CORE {
 
   public static final IRI EXPOSES_SIGNIFIER;
 
+  public static final IRI HAS_PROFILE;
+
   public static final IRI IS_PROFILE_OF;
 
   public static final IRI TRANSITIVELY_CONTAINS;
@@ -60,6 +62,7 @@ public class CORE {
     HOSTS = rdf.createIRI(NAMESPACE + "hosts");
     IS_HOSTED_ON = rdf.createIRI(NAMESPACE + "isHostedOn");
     EXPOSES_SIGNIFIER = rdf.createIRI(NAMESPACE + "exposesSignifier");
+    HAS_PROFILE = rdf.createIRI(NAMESPACE + "hasProfile");
     IS_PROFILE_OF = rdf.createIRI(NAMESPACE + "isProfileOf");
     TRANSITIVELY_CONTAINS = rdf.createIRI(NAMESPACE + "transitivelyContains");
     IS_TRANSITIVELY_CONTAINED_IN = rdf.createIRI(NAMESPACE + "isTransitivelyContainedIn");
@@ -85,6 +88,7 @@ public class CORE {
     HOSTS(CORE.HOSTS),
     IS_HOSTED_ON(CORE.IS_HOSTED_ON),
     EXPOSES_SIGNIFIER(CORE.EXPOSES_SIGNIFIER),
+    HAS_PROFILE(CORE.HAS_PROFILE),
     IS_PROFILE_OF(CORE.IS_PROFILE_OF),
     TRANSITIVELY_CONTAINS(CORE.TRANSITIVELY_CONTAINS),
     IS_TRANSITIVELY_CONTAINED_IN(CORE.IS_TRANSITIVELY_CONTAINED_IN);
