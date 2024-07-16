@@ -3,6 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
+allprojects {
+    version = '1.0-SNAPSHOT'
+    group = 'ch.unisg.ics.interactions.hmas'
+}
+
 repositories {
     mavenCentral()
 }
