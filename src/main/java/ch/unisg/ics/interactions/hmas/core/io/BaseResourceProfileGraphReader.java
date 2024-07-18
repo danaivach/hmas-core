@@ -1,6 +1,7 @@
 package ch.unisg.ics.interactions.hmas.core.io;
 
 import ch.unisg.ics.interactions.hmas.core.hostables.*;
+import org.apache.hc.client5.http.fluent.Request;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
@@ -40,6 +41,12 @@ public class BaseResourceProfileGraphReader {
               "Ensure that an " + NAMESPACE + "ResourceProfile is represented.");
     }
   }
+
+  public static BaseResourceProfile readFromURL(String url) throws IOException {
+    String representation = Request.get(url).execute().returnContent().asString();
+    return readFromString(representation);
+  }
+
 
   public static BaseResourceProfile readFromFile(String path) throws IOException {
     String content = new String(Files.readAllBytes(Paths.get(path)));
