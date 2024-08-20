@@ -55,12 +55,12 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter addProfileIRI() {
+  protected BaseResourceProfileGraphWriter addProfileIRI() {
     this.graphBuilder.add(profileIRI, RDF.TYPE, profile.getTypeAsIRI());
     return this;
   }
 
-  public BaseResourceProfileGraphWriter addSemanticTypes() {
+  protected BaseResourceProfileGraphWriter addSemanticTypes() {
     Set<String> semanticTypes = this.profile.getSemanticTypes();
     for (String type : semanticTypes) {
       this.graphBuilder.add(profileIRI, RDF.TYPE, rdf.createIRI(type));
@@ -68,7 +68,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter addOwnerResource() {
+  protected BaseResourceProfileGraphWriter addOwnerResource() {
     AbstractResource resource = (AbstractResource) profile.getResource();
     Resource node = resolveHostableLocation(resource);
     this.graphBuilder.add(profileIRI, IS_PROFILE_OF, node);
@@ -76,7 +76,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter<T> addHomeHMASPlatforms() {
+  protected BaseResourceProfileGraphWriter<T> addHomeHMASPlatforms() {
     Set<HypermediaMASPlatform> platforms = profile.getHMASPlatforms();
     for (HypermediaMASPlatform platform : platforms) {
       Resource node = resolveHostableLocation(platform);
@@ -86,7 +86,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter writeResource(AbstractResource resource, Resource node) {
+  protected BaseResourceProfileGraphWriter writeResource(AbstractResource resource, Resource node) {
 
     if (AGENT.equals(resource.getTypeAsIRI())) {
       addAgent((Agent) resource, node);
@@ -102,17 +102,17 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter addAgent(Agent agent, Resource node) {
+  protected BaseResourceProfileGraphWriter addAgent(Agent agent, Resource node) {
     addHostable(agent, node);
     return this;
   }
 
-  private BaseResourceProfileGraphWriter addArtifact(Artifact artifact, Resource node) {
+  protected BaseResourceProfileGraphWriter addArtifact(Artifact artifact, Resource node) {
     addHostable(artifact, node);
     return this;
   }
 
-  private BaseResourceProfileGraphWriter addWorkspace(Workspace workspace, Resource node) {
+  protected BaseResourceProfileGraphWriter addWorkspace(Workspace workspace, Resource node) {
     Set<AbstractHostable> contained = workspace.getContainedResources();
     for (AbstractHostable containedResource : contained) {
       Resource containedNode = resolveHostableLocation(containedResource);
@@ -123,7 +123,7 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this;
   }
 
-  private BaseResourceProfileGraphWriter addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
+  protected BaseResourceProfileGraphWriter addHMASPlatform(HypermediaMASPlatform platform, Resource node) {
     Set<AbstractHostable> hosted = platform.getHostedResources();
     for (AbstractHostable hostedResource : hosted) {
       Resource hostedNode = resolveHostableLocation(hostedResource);
@@ -163,11 +163,11 @@ public class BaseResourceProfileGraphWriter<T extends BaseResourceProfile> imple
     return this.addGraph(resource, node);
   }
 
-  private BaseResourceProfileGraphWriter addGraph() {
+  protected BaseResourceProfileGraphWriter addGraph() {
     return this.addGraph(profile, profileIRI);
   }
 
-  private BaseResourceProfileGraphWriter addGraph(AbstractResource resource, Resource node) {
+  protected BaseResourceProfileGraphWriter addGraph(AbstractResource resource, Resource node) {
     Optional<Model> graph = resource.getResolvedGraph(node);
     if (graph.isPresent()) {
       getModel().addAll(graph.get());
