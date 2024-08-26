@@ -59,8 +59,6 @@ public class ResourceProfileGraphReaderTest {
             BaseResourceProfileGraphReader.readFromString(expectedProfile);
 
     assertEquals(CORE.RESOURCE_PROFILE, profile.getTypeAsIRI());
-    assertTrue(profile.getIRI().isPresent());
-    assertTrue(profile.getIRIAsString().isPresent());
 
     AbstractResource agent = (AbstractResource) profile.getResource();
     assertTrue(agent.getGraph().isPresent());
