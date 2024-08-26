@@ -2,8 +2,8 @@ package ch.unisg.ics.interactions.hmas.core.io;
 
 import ch.unisg.ics.interactions.hmas.core.hostables.*;
 import org.apache.hc.client5.http.fluent.Request;
-import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
@@ -159,12 +159,16 @@ public class BaseResourceProfileGraphReader {
 
     Model resourceModel = model.filter(node, null, null);
 
-    if (node.isBNode()) {
-      for (Statement statement : resourceModel) {
-        builder.addTriple(statement.getPredicate(), statement.getObject());
+    for (Statement statement : resourceModel) {
+      Value object = statement.getObject();
+      // Add the statement to filteredModel only if the object is not a BNode
+      if (!(object instanceof BNode)) {
+        if (node.isBNode()) {
+          builder.addTriple(statement.getPredicate(), statement.getObject());
+        } else {
+          builder.addTriple(statement.getSubject(), statement.getPredicate(), statement.getObject());
+        }
       }
-    } else {
-      builder.addGraph(resourceModel);
     }
 
     return builder.build();

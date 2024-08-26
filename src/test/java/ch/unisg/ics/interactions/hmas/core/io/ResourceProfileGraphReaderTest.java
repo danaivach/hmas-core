@@ -47,6 +47,29 @@ public class ResourceProfileGraphReaderTest {
   }
 
   @Test
+  public void testReadResourceProfileGraphWithBNodes() {
+    String expectedProfile = PREFIXES +
+            ".\n" +
+            "<urn:profile> a hmas:ResourceProfile ;\n" +
+            " hmas:isProfileOf <urn:agent> .\n" +
+            "<urn:agent> a hmas:Agent ;\n" +
+            " <http://example.org/predicate> [ a hmas:Artifact ].";
+
+    BaseResourceProfile profile =
+            BaseResourceProfileGraphReader.readFromString(expectedProfile);
+
+    assertEquals(CORE.RESOURCE_PROFILE, profile.getTypeAsIRI());
+    assertTrue(profile.getIRI().isPresent());
+    assertTrue(profile.getIRIAsString().isPresent());
+
+    AbstractResource agent = (AbstractResource) profile.getResource();
+    assertTrue(agent.getGraph().isPresent());
+
+    Model agentModel = agent.getGraph().get();
+    assertEquals(1, agentModel.size());
+  }
+
+  @Test
   public void testReadResourceProfileWithAdditionalTriples() {
     String expectedProfile = PREFIXES +
             ".\n" +
